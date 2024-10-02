@@ -5,6 +5,8 @@ namespace MoView\Service;
 use MoView\Config\Database;
 use MoView\Domain\User;
 use MoView\Exception\ValidationException;
+use MoView\Model\UserLoginRequest;
+use MoView\Model\UserLoginResponse;
 use MoView\Model\UserRegisterRequest;
 use MoView\Model\UserRegisterResponse;
 use MoView\Repository\UserRepository;
@@ -46,9 +48,6 @@ class UserService
             Database::rollbackTransaction();
             throw $err;
         }
-
-
-
     }
 
     private function validateUserRegistrationRequest(UserRegisterRequest $request):void {
@@ -56,6 +55,32 @@ class UserService
             trim($request->id) == "" || trim($request->password) == "" || trim($request->name) == ""
         ) {
             throw new ValidationException ("All fields are required");
+        }
+    }
+
+    public function login(UserloginRequest $request):UserLoginResponse {
+        $this->validateUserLoginRequest($request);
+
+            $user = $this->userRepository->findById($request->id);
+
+            if($user == null){
+                throw new ValidationException('id or password is wrong');
+            }
+
+            if(password_verify($request->password, $user->password)){
+                $response = new UserLoginResponse();
+                $response->user = $user;
+                return $response;
+            }else {
+                throw new ValidationException("id or password is wrong");
+            }
+    }
+
+    private function validateUserLoginRequest(UserLoginRequest $request):void {
+        if($request->id == null || $request->password == null ||
+            trim($request->id) == "" || trim($request->password) == ""
+        ) {
+            throw new ValidationException ("id and password cannot be empty");
         }
     }
 
