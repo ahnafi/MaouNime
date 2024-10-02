@@ -1,5 +1,7 @@
 <?php
 
+namespace MoView\Middleware;
+
 interface Middleware
 {
 

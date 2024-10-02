@@ -1,8 +1,8 @@
 <?php
 
-namespace MoView\Domain;
+namespace MoView\Model;
 
-class User
+class UserRegisterRequest
 {
     public string $id;
     public string $name;

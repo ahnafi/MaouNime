@@ -1,5 +1,6 @@
 <?php
 
+namespace MoView\App;
 
 class Router
 {

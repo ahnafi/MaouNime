@@ -1,5 +1,7 @@
 <?php
 
+namespace MoView\App;
+
 class View
 {
 

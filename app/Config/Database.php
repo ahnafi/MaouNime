@@ -1,5 +1,7 @@
 <?php
 
+namespace MoView\Config;
+
 class Database
 {
     private static ?\PDO $pdo = null;
