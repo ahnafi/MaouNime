@@ -1,18 +1,16 @@
 <?php
 
-namespace MoView\App {
-    function header(string $value)
-    {
-        echo $value;
-    }
-}
+namespace MoView\Controller;
 
-namespace MoView\Controller {
+    require_once __DIR__ ."/../Helper/Helper.php";
 
     use MoView\Config\Database;
+    use MoView\Domain\Session;
     use MoView\Domain\User;
     use MoView\Exception\ValidationException;
+    use MoView\Repository\SessionRepository;
     use MoView\Repository\UserRepository;
+    use MoView\Service\SessionService;
     use PHPUnit\Framework\TestCase;
 
     class UserControllerTest extends TestCase
@@ -20,10 +18,16 @@ namespace MoView\Controller {
 
         private UserController $userController;
         private UserRepository $userRepository;
+        private SessionRepository $sessionRepository;
 
         public function setUp(): void
         {
+
             $this->userController = new UserController();
+
+            $this->sessionRepository = new SessionRepository(Database::getConnection());
+            $this->sessionRepository->deleteAll();
+
             $this->userRepository = new UserRepository(Database::getConnection());
             $this->userRepository->deleteAll();
 
@@ -141,5 +145,24 @@ namespace MoView\Controller {
             $this->expectOutputRegex('<form>');
             $this->expectOutputRegex('[id or password is wrong]');
         }
+
+        public function testLogout(){
+            $user = new User();
+            $user->id = "budi";
+            $user->name = "budi";
+            $user->password = "budi";
+
+            $this->userRepository->save($user);
+
+            $session = new Session();
+            $session->id = uniqid();
+            $session->userId = $user->id;
+
+            $this->sessionRepository->save($session);
+
+            $this->userController->logout();
+            $this->expectOutputRegex('[PHP Login Management]');
+            $this->expectOutputRegex("[Location: /]");
+        }
+
     }
-}

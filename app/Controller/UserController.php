@@ -7,17 +7,23 @@ use MoView\Config\Database;
 use MoView\Exception\ValidationException;
 use MoView\Model\UserLoginRequest;
 use MoView\Model\UserRegisterRequest;
+use MoView\Repository\SessionRepository;
 use MoView\Repository\UserRepository;
+use MoView\Service\SessionService;
 use MoView\Service\UserService;
 
 class UserController
 {
     private UserService $userService;
+    private SessionService $sessionService;
 
     public function __construct(){
         $connection = Database::getConnection();
         $userRepository = new UserRepository($connection);
         $this->userService = new UserService($userRepository);
+
+        $sessionRepository = new SessionRepository($connection);
+        $this->sessionService = new SessionService($sessionRepository,$userRepository);
     }
 
     public function register():void {
@@ -54,7 +60,8 @@ class UserController
         $request->id = $_POST['id'];
         $request->password = $_POST['password'];
         try{
-            $this->userService->login($request);
+            $response = $this->userService->login($request);
+            $this->sessionService->create($response->user->id);
             View::redirect('/');
         }catch (ValidationException $exception){
             View::render("/User/login",[
@@ -63,5 +70,10 @@ class UserController
             ]);
         }
 
+    }
+
+    public function logout():void{
+        $this->sessionService->destroy();
+        View::redirect('/');
     }
 }
