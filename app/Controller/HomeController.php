@@ -38,14 +38,10 @@ class HomeController
 
     public function comment():void{
         $user = $this->sessionService->current();
-        if($user == null){
-            View::redirect("/users/login");
-        }else {
             View::render("Home/comment", [
                 "title" => "comment anime",
                 "user" => $user->name,
                 "anime" => "anime naruto",
             ]);
-        }
     }
 }
