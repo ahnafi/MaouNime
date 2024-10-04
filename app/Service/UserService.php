@@ -7,6 +7,8 @@ use MoView\Domain\User;
 use MoView\Exception\ValidationException;
 use MoView\Model\UserLoginRequest;
 use MoView\Model\UserLoginResponse;
+use MoView\Model\UserPasswordUpdateRequest;
+use MoView\Model\UserPasswordUpdateResponse;
 use MoView\Model\UserProfileUpdateRequest;
 use MoView\Model\UserProfileUpdateResponse;
 use MoView\Model\UserRegisterRequest;
@@ -116,7 +118,49 @@ class UserService
         if($request->id == null || $request->name == null ||
             trim($request->id) == "" || trim($request->name) == ""
         ) {
-            throw new ValidationException ("id and name cannot be empty");
+            throw new ValidationException ("name cannot be empty");
+        }
+    }
+
+    public function updatePassword(UserPasswordUpdateRequest $request):UserPasswordUpdateResponse {
+        $this->validateUserPasswordUpdateRequest($request);
+
+        try{
+            Database::beginTransaction();
+
+            $user = $this->userRepository->findById($request->id);
+
+            if($user == null){
+                throw new ValidationException ("user is not found");
+            }
+
+            if (!password_verify($request->oldPassword,$user->password )) {
+                throw new ValidationException ("old password is wrong");
+            }
+
+            if (password_verify($request->newPassword,$request->oldPassword )) {
+                throw new ValidationException ("new password cannot be same as old password");
+            }
+
+            $user->password = password_hash($request->newPassword, PASSWORD_BCRYPT);
+            $this->userRepository->update($user);
+
+            Database::commitTransaction();
+
+            $response = new UserPasswordUpdateResponse();
+            $response->user = $user;
+            return $response;
+        }catch (\Exception $err){
+            Database::rollbackTransaction();
+            throw $err;
+        }
+    }
+
+    private function validateUserPasswordUpdateRequest(UserPasswordUpdateRequest $request):void {
+        if($request->id == null || $request->newPassword == null || $request->oldPassword == null ||
+            trim($request->id) == "" || trim($request->oldPassword) == "" || trim($request->newPassword) == ""
+        ) {
+            throw new ValidationException ("new password cannot be empty");
         }
     }
 

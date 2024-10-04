@@ -6,6 +6,7 @@ use MoView\App\View;
 use MoView\Config\Database;
 use MoView\Exception\ValidationException;
 use MoView\Model\UserLoginRequest;
+use MoView\Model\UserPasswordUpdateRequest;
 use MoView\Model\UserProfileUpdateRequest;
 use MoView\Model\UserRegisterRequest;
 use MoView\Repository\SessionRepository;
@@ -106,6 +107,36 @@ class UserController
                 'user'=> [
                     'id' => $user->id,
                     'name' => $_POST['name'],
+                ]
+            ]);
+        }
+    }
+
+    public function updatePassword(){
+        $user = $this->sessionService->current();
+        View::render("User/password",[
+            'title' => 'Update password',
+            'user'=> [
+                'id' => $user->id,
+            ]
+        ]);
+    }
+    public function postUpdatePassword():void{
+        $user = $this->sessionService->current();
+        $request = new UserPasswordUpdateRequest();
+        $request->id = $user->id;
+        $request->newPassword = $_POST['newPassword'];
+        $request->oldPassword = $_POST['oldPassword'];
+
+        try {
+            $this->userService->updatePassword($request);
+            View::redirect('/');
+        }catch (ValidationException $exception){
+            View::render("User/password",[
+                'title' => 'Update password',
+                'error' => $exception->getMessage(),
+                'user'=> [
+                    'id' => $user->id,
                 ]
             ]);
         }

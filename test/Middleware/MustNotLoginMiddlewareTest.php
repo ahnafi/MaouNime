@@ -2,7 +2,7 @@
 
 namespace MoView\Middleware;
 
-require __DIR__ . '/../Helper/Helper.php';
+require __DIR__ . '/../Helper/helper.php';
 
 use MoView\Config\Database;
 use MoView\Domain\Session;

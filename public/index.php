@@ -23,6 +23,8 @@ Router::add("POST","/users/login",UserController::class,"postLogin",[mustNotLogi
 Router::add("GET","/users/logout",UserController::class,"logout",[mustLoginMiddleware::class]);
 Router::add("GET","/users/profile",UserController::class,"updateProfile",[mustLoginMiddleware::class]);
 Router::add("POST","/users/profile",UserController::class,"postUpdateProfile",[mustLoginMiddleware::class]);
+Router::add("GET","/users/password",UserController::class,"updatePassword",[mustLoginMiddleware::class]);
+Router::add("POST","/users/password",UserController::class,"postUpdatePassword",[mustLoginMiddleware::class]);
 
 
 //router run

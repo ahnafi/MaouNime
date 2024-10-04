@@ -6,8 +6,10 @@ use MoView\Config\Database;
 use MoView\Domain\User;
 use MoView\Exception\ValidationException;
 use MoView\Model\UserLoginRequest;
+use MoView\Model\UserPasswordUpdateRequest;
 use MoView\Model\UserProfileUpdateRequest;
 use MoView\Model\UserRegisterRequest;
+use MoView\Repository\SessionRepository;
 use MoView\Repository\UserRepository;
 use PHPUnit\Framework\TestCase;
 
@@ -15,12 +17,14 @@ class UserServiceTest extends TestCase
 {
     private UserService $userService;
     private UserRepository $userRepository;
+    private SessionRepository $sessionRepository;
 
     protected function setUp(): void {
         $connection = Database::getConnection();
+        $this->sessionRepository = new SessionRepository($connection);
         $this->userRepository = new UserRepository($connection);
         $this->userService = new UserService($this->userRepository);
-
+        $this->sessionRepository->deleteAll();
         $this->userRepository->deleteAll();
     }
 
@@ -144,4 +148,65 @@ class UserServiceTest extends TestCase
 
         $this->userService->updateProfile($request);
     }
+
+    public function testUpdatePasswordSuccess (){
+        $user = new User();
+        $user->id = "budi";
+        $user->name = "budi";
+        $user->password = password_hash("123456", PASSWORD_BCRYPT);
+
+        $this->userRepository->save($user);
+
+        $request = new UserPasswordUpdateRequest();
+        $request->id = "budi";
+        $request->oldPassword = "123456";
+        $request->newPassword = "55555";
+
+        $this->userService->updatePassword($request);
+
+        $response = $this->userRepository->findById($user->id);
+        self::assertTrue(password_verify($request->newPassword,$response->password));
+    }
+
+    public function testUpdatePasswordNotEmpty():void{
+        self::expectException(ValidationException::class);
+        $user = new User();
+        $user->id = "budi";
+        $user->name = "budi";
+        $user->password = password_hash("123456", PASSWORD_BCRYPT);
+
+        $this->userRepository->save($user);
+
+        $request = new UserPasswordUpdateRequest();
+        $request->id = "budi";
+        $request->oldPassword = "123456";
+        $request->newPassword = "";
+
+        $this->userService->updatePassword($request);
+
+        self::expectExceptionMessage("new password cannot be same as old password");
+        $request->newPassword = "123456";
+        $this->userService->updatePassword($request);
+
+    }
+
+    public function testUpdatePasswordWrongOldPassword(){
+        self::expectException(ValidationException::class);
+        self::expectExceptionMessage("old password is wrong");
+
+        $user = new User();
+        $user->id = "budi";
+        $user->name = "budi";
+        $user->password = password_hash("123456", PASSWORD_BCRYPT);
+
+        $this->userRepository->save($user);
+
+        $request = new UserPasswordUpdateRequest();
+        $request->id = "budi";
+        $request->oldPassword = "abcs";
+        $request->newPassword = "aaa";
+
+        $this->userService->updatePassword($request);
+    }
+
 }

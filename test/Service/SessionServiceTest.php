@@ -2,7 +2,7 @@
 
 namespace MoView\Service;
 
-require_once __DIR__ . "/../Helper/Helper.php";
+require_once __DIR__ . "/../Helper/helper.php";
 
 use MoView\Config\Database;
 use MoView\Domain\Session;
