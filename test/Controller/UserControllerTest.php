@@ -165,4 +165,76 @@ namespace MoView\Controller;
             $this->expectOutputRegex("[Location: /]");
         }
 
+        public function testPostUpdateProfile():void{
+            $user = new User();
+            $user->id = "budi";
+            $user->name = "budi";
+            $user->password = "budi";
+
+            $this->userRepository->save($user);
+
+            $session = new Session();
+            $session->id = uniqid();
+            $session->userId = $user->id;
+
+            $this->sessionRepository->save($session);
+
+            $_COOKIE[SessionService::$COOKIE_NAME] = $session->id;
+
+            $_POST['name'] = "budiono";
+            $this->userController->postUpdateProfile();
+
+            self::expectOutputRegex("[Location: /]");
+
+            $result = $this->userRepository->findById($user->id);
+            self::assertEquals("budiono", $result->name);
+        }
+
+        public function testUpdateProfile(){
+            $user = new User();
+            $user->id = "budi";
+            $user->name = "budi";
+            $user->password = "budi";
+
+            $this->userRepository->save($user);
+
+            $session = new Session();
+            $session->id = uniqid();
+            $session->userId = $user->id;
+
+            $this->sessionRepository->save($session);
+
+            $_COOKIE[SessionService::$COOKIE_NAME] = $session->id;
+
+            $this->userController->updateProfile();
+
+            $this->expectOutputRegex('action="/users/profile">]');
+            $this->expectOutputRegex("[update]");
+        }
+
+        public function testUpdateProfileValidationError(){
+            $user = new User();
+            $user->id = "budi";
+            $user->name = "budi";
+            $user->password = "budi";
+
+            $this->userRepository->save($user);
+
+            $session = new Session();
+            $session->id = uniqid();
+            $session->userId = $user->id;
+
+            $this->sessionRepository->save($session);
+
+            $_COOKIE[SessionService::$COOKIE_NAME] = $session->id;
+
+            $_POST['name'] = "";
+            $this->userController->postUpdateProfile();
+
+            $this->expectOutputRegex('action="/users/profile">]');
+            $this->expectOutputRegex("[update]");
+            $this->expectOutputRegex("[id and name cannot be empty]");
+
+        }
+
     }

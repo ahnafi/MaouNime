@@ -7,6 +7,8 @@ use MoView\Domain\User;
 use MoView\Exception\ValidationException;
 use MoView\Model\UserLoginRequest;
 use MoView\Model\UserLoginResponse;
+use MoView\Model\UserProfileUpdateRequest;
+use MoView\Model\UserProfileUpdateResponse;
 use MoView\Model\UserRegisterRequest;
 use MoView\Model\UserRegisterResponse;
 use MoView\Repository\UserRepository;
@@ -81,6 +83,40 @@ class UserService
             trim($request->id) == "" || trim($request->password) == ""
         ) {
             throw new ValidationException ("id and password cannot be empty");
+        }
+    }
+
+    public function updateProfile(UserProfileUpdateRequest $request):UserProfileUpdateResponse {
+        $this->validateUserProfileUpdateRequest($request);
+
+        try {
+            Database::beginTransaction();
+
+            $user = $this->userRepository->findById($request->id);
+
+            if($user == null){
+                throw new ValidationException ("user is not found");
+            }
+
+            $user->name = $request->name;
+            $this->userRepository->update($user);
+
+            Database::commitTransaction();
+
+            $response = new UserProfileUpdateResponse();
+            $response->user = $user;
+            return $response;
+        }catch (\Exception $err){
+            Database::rollbackTransaction();
+            throw $err;
+        }
+    }
+
+    private function validateUserProfileUpdateRequest(UserProfileUpdateRequest $request):void {
+        if($request->id == null || $request->name == null ||
+            trim($request->id) == "" || trim($request->name) == ""
+        ) {
+            throw new ValidationException ("id and name cannot be empty");
         }
     }
 

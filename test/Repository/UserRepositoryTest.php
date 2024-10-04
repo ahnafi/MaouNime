@@ -9,8 +9,11 @@ use PHPUnit\Framework\TestCase;
 class UserRepositoryTest extends TestCase
 {
     private UserRepository $userRepository;
+    private SessionRepository $sessionRepository;
 
     public function setUp():void{
+        $this->sessionRepository = new SessionRepository(Database::getConnection());
+        $this->sessionRepository->deleteAll();
         $this->userRepository = new UserRepository(Database::getConnection());
         $this->userRepository->deleteAll();
     }
@@ -34,6 +37,25 @@ class UserRepositoryTest extends TestCase
         $user = $this->userRepository->findById("budionosiregar");
 
         self::assertNull($user);
+    }
+
+    public function testUpdateSuccess(){
+        $user = new User();
+        $user->id = "budi";
+        $user->name = "budi";
+        $user->password = "123456";
+
+        $this->userRepository->save($user);
+
+        $user->name = "budionosiregar";
+        $user->password = "555";
+
+        $this->userRepository->update($user);
+
+        $result = $this->userRepository->findById($user->id);
+
+        $this->assertEquals("budionosiregar", $result->name);
+        $this->assertEquals("555", $result->password);
     }
 
 }

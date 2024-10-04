@@ -6,6 +6,7 @@ use MoView\Config\Database;
 use MoView\Domain\User;
 use MoView\Exception\ValidationException;
 use MoView\Model\UserLoginRequest;
+use MoView\Model\UserProfileUpdateRequest;
 use MoView\Model\UserRegisterRequest;
 use MoView\Repository\UserRepository;
 use PHPUnit\Framework\TestCase;
@@ -105,5 +106,42 @@ class UserServiceTest extends TestCase
 
         $this->userService->login($request);
 
+    }
+
+    public function testUpdateProfileSuccess (){
+        $user = new User();
+        $user->id = "budi";
+        $user->name = "budi";
+        $user->password = password_hash("123456", PASSWORD_BCRYPT);
+
+        $this->userRepository->save($user);
+
+        $request = new UserProfileUpdateRequest();
+        $request->id = "budi";
+        $request->name = "budionosiregar";
+
+        $this->userService->updateProfile($request);
+
+        $response = $this->userRepository->findById($user->id);
+        self::assertEquals($request->name, $response->name);
+    }
+
+    public function testUpdateProfileValidationError(){
+        $this->expectException(ValidationException::class);
+
+        $request = new UserProfileUpdateRequest();
+        $request->id = "    v   ";
+        $request->name = "       ";
+
+        $this->userService->updateProfile($request);
+    }
+
+    public function testUpdateProfileNotFound(){
+        self::expectException(ValidationException::class);
+        $request = new UserProfileUpdateRequest();
+        $request->id = "budi";
+        $request->name = "budionosiregar";
+
+        $this->userService->updateProfile($request);
     }
 }

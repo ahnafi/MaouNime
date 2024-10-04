@@ -6,6 +6,7 @@ use MoView\App\View;
 use MoView\Config\Database;
 use MoView\Exception\ValidationException;
 use MoView\Model\UserLoginRequest;
+use MoView\Model\UserProfileUpdateRequest;
 use MoView\Model\UserRegisterRequest;
 use MoView\Repository\SessionRepository;
 use MoView\Repository\UserRepository;
@@ -72,8 +73,41 @@ class UserController
 
     }
 
-    public function logout():void{
+    public function logout():void {
         $this->sessionService->destroy();
         View::redirect('/');
+    }
+
+    public function updateProfile():void{
+        $user = $this->sessionService->current();
+        View::render("User/profile",[
+            'title' => 'Update profile',
+            'user'=> [
+                'id' => $user->id,
+                'name' => $user->name,
+            ]
+        ]);
+    }
+
+    public function postUpdateProfile():void{
+        $user = $this->sessionService->current();
+
+        $request = new UserProfileUpdateRequest();
+        $request->id = $user->id;
+        $request->name = $_POST['name'];
+
+        try {
+         $this->userService->updateProfile($request);
+         View::redirect('/');
+        } catch (ValidationException $exception){
+            View::render("User/profile",[
+                'title' => 'Update profile',
+                'error' => $exception->getMessage(),
+                'user'=> [
+                    'id' => $user->id,
+                    'name' => $_POST['name'],
+                ]
+            ]);
+        }
     }
 }
