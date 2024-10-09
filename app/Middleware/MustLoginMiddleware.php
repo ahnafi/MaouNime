@@ -23,7 +23,12 @@ class MustLoginMiddleware
     {
         $user = $this->sessionService->current();
         if ($user == null) {
-            View::redirect('/users/login');
+            $redirectUrl = urlencode($_SERVER['REQUEST_URI']);
+            if($redirectUrl == ""){
+                View::redirect("/users/login");
+            }else {
+                View::redirect("/users/login?redirect=".$redirectUrl);
+            }
         }
     }
 }

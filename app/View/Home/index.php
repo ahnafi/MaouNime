@@ -1,13 +1,9 @@
 <?php
-if (isset($model)){
-    echo $model['title'] . "<br>";
-    echo $model['anime'] . PHP_EOL;
-}
+ include_once __DIR__ . "/../Components/navbar.php";
 ?>
-
 <div>
-    index home
-    <a href="/comment">misal ini komentar anime</a>
-    <a href="/users/login">login</a>
-    <a href="/users/register">register</a>
+    <h1>
+        index home
+    </h1>
+    <a href="/anime">get started</a>
 </div>
