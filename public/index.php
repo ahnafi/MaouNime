@@ -11,11 +11,16 @@ use MoView\Middleware\MustNotLoginMiddleware;
 //set database to app production
 Database::getConnection("prod");
 
+//set timezone
+date_default_timezone_set("Asia/jakarta");
+
 //router home
 Router::add("GET","/",HomeController::class,"index");
 Router::add("GET","/anime",HomeController::class,"anime");
 Router::add("GET","/anime/detail/([0-9]*)",HomeController::class,"detailAnime");
 Router::add("GET","/anime/search",HomeController::class,"searchAnime");
+Router::add("POST", "/anime/comment", HomeController::class, "postComment", [MustLoginMiddleware::class]);
+
 //router user
 Router::add("GET","/users/profile",UserController::class,"userProfile",[MustLoginMiddleware::class]);
 Router::add("GET","/users/register",UserController::class,"register",[MustNotLoginMiddleware::class]);

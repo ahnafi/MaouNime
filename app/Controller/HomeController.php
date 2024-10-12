@@ -3,15 +3,21 @@
 namespace MoView\Controller;
 use MoView\App\View;
 use MoView\Config\Database;
+use MoView\Exception\ValidationException;
+use MoView\Model\UserCommentAnimeRequest;
+use MoView\Repository\AnimeRepository;
+use MoView\Repository\CommentRepository;
 use MoView\Repository\SessionRepository;
 use MoView\Repository\UserRepository;
 use MoView\Service\AnimeServices;
+use MoView\Service\CommentServices;
 use MoView\Service\SessionService;
 
 class HomeController
 {
     private SessionService $sessionService;
     private AnimeServices $animeServices;
+    private CommentServices $commentServices;
 
     public function __construct()
     {
@@ -20,7 +26,10 @@ class HomeController
         $userRepository = new UserRepository($connection);
         $this->sessionService = new SessionService($sessionRepository, $userRepository);
 
+        $commentRepository = new CommentRepository($connection);
+        $animeRepository = new AnimeRepository($connection);
         $this->animeServices = new AnimeServices();
+        $this->commentServices = new CommentServices($commentRepository,$userRepository,$animeRepository);
     }
 
     public function Error404(): void
@@ -100,26 +109,63 @@ class HomeController
         View::render('Anime/search', $data);
     }
 
-    public function detailAnime($id): void
-    {
-        $user = $this->sessionService->current();
-        $anime = $this->animeServices->getanimeById($id);
+  public function detailAnime($id): void
+  {
+    $user = $this->sessionService->current();
 
-        if($anime["status"] === 404){
-            View::redirect('/anime');
-        }
+    // Ambil data anime berdasarkan ID
+    $anime = $this->animeServices->getanimeById($id);
 
-        $data = [
-            "title" => "MaouNime anime wiki",
-            'anime' => $anime,
-        ];
+    // Ambil komentar berdasarkan ID anime
+    $comments = $this->commentServices->getCommentByAnimeId($id);
 
-        if ($user !== null) {
-            $data["user"] = [
-                "name" => $user->name,
-            ];
-        }
-
-        View::render('Anime/detail', $data);
+    // Jika anime tidak ditemukan atau ada kesalahan status, redirect ke halaman anime
+    if (isset($anime["status"])) {
+      View::redirect('/anime');
     }
+
+    // Siapkan data untuk dikirim ke view
+    $data = [
+      "title" => "MaouNime anime wiki",
+      'anime' => $anime,
+      'comments' => $comments, // Tambahkan komentar ke dalam data yang dikirim ke view
+    ];
+
+    // Jika user login, tambahkan informasi user
+    if ($user !== null) {
+      $data["user"] = [
+        "name" => $user->name,
+      ];
+    }
+
+    // Render tampilan detail anime
+    View::render('Anime/detail', $data);
+  }
+
+  public function postComment(): void {
+    $date = new \DateTime();
+    $user = $this->sessionService->current();
+
+    if ($user === null) {
+      // Redirect to login page if user is not logged in
+      View::redirect('/users/login');
+      return;
+    }
+
+    $request = new UserCommentAnimeRequest();
+    $request->animeId = htmlspecialchars($_POST["animeId"]);
+    $request->animeTitle = htmlspecialchars($_POST["animeTitle"]);
+    $request->comment = htmlspecialchars($_POST["comment"]);
+    $request->userId = $user->id;
+    $request->commentedAt = $date->format("Y-m-d H:i:s");
+
+    try {
+      $this->commentServices->createComment($request);
+      View::redirect("/anime/detail/" . $request->animeId);
+    } catch (ValidationException $exception) {
+      // Jika ada error, kembalikan ke halaman detail dengan pesan error
+      View::redirect("/anime/detail/" . $request->animeId);
+    }
+  }
+
 }

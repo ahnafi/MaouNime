@@ -2,12 +2,22 @@
 
 namespace MoView\Service;
 
+use MoView\Domain\Anime;
+use MoView\Repository\AnimeRepository;
+
 class AnimeServices
 {
 
     private string $apiBaseUrl = 'https://api.jikan.moe/v4';
+//    public AnimeRepository $animeRepository;
+//
+//  public function __construct(AnimeRepository $animeRepository)
+//  {
+//    $this->animeRepository = $animeRepository;
+//  }
 
-    public function searchAnime(string $keyword) : mixed
+
+  public function searchAnime(string $keyword) : mixed
     {
         $url = $this->apiBaseUrl . '/anime?sfw=true&' . $keyword;
         return $this->makeApiRequest($url);
@@ -48,4 +58,21 @@ class AnimeServices
         // Decode data JSON
         return json_decode($response, true);
     }
+
+//    public function DBanimeSave() {
+//
+//      try {
+//        $anime = new Anime();
+//
+//
+//        $this->animeRepository->save();
+//
+//      }catch (\Exception $e){
+//
+//      }
+//    }
+//
+//    private function validateAnimeSaveRequest (){
+//
+//    }
 }
