@@ -12,7 +12,7 @@ use MoView\Repository\AnimeRepository;
 use MoView\Repository\CommentRepository;
 use MoView\Repository\UserRepository;
 
-class CommentServices
+class CommentService
 {
   public CommentRepository $commentRepository;
   public UserRepository $userRepository;

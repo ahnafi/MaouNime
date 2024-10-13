@@ -46,6 +46,23 @@ class CommentRepository
     return $comments;
   }
 
+  public function popularCommentAnimeID ():?array {
+    $statement = $this->connection->prepare("SELECT anime_id FROM comments GROUP BY anime_id ORDER BY COUNT(*) DESC LIMIT 5");
+    $statement->execute();
+    $rows = $statement->fetchAll();
+    if(empty($rows)){
+      return null;
+    }
+
+    $animeId = [];
+
+    foreach($rows as $row){
+      $animeId[] = $row["anime_id"];
+    }
+    return $animeId;
+  }
+
+
   public function deleteById(int $id): void
   {
     $statement = $this->connection->prepare("DELETE FROM comments WHERE id=?");

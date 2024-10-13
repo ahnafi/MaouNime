@@ -34,8 +34,11 @@ include_once __DIR__ . "/../Components/navbar.php";
       <p><strong>Synopsis:</strong> <?= $anime['synopsis'] ?></p>
 
       <!-- Watchlist Button -->
-      <form action="/watchlist/add" method="POST">
-        <input type="hidden" name="anime_id" value="<?= $anime['mal_id'] ?>">
+      <form action="/anime/watchlist" method="POST">
+        <input type="hidden" name="animeId" value="<?= $anime['mal_id'] ?>">
+        <input type="hidden" name="img" value="<?= $anime['images']['webp']['image_url'] ?>">
+        <input type="hidden" name="animeTitle" value="<?= $anime['title'] ?>">
+`
         <button type="submit" class="btn btn-primary">Add to Watchlist</button>
       </form>
 

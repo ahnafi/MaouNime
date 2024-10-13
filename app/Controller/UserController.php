@@ -5,19 +5,26 @@ namespace MoView\Controller;
 use MoView\App\View;
 use MoView\Config\Database;
 use MoView\Exception\ValidationException;
+use MoView\Model\UserDeleteWatchlistRequest;
 use MoView\Model\UserLoginRequest;
 use MoView\Model\UserPasswordUpdateRequest;
 use MoView\Model\UserProfileUpdateRequest;
+use MoView\Model\UserProfileWatchlistRequest;
 use MoView\Model\UserRegisterRequest;
+use MoView\Model\UserUpdateWatchlistRequest;
+use MoView\Repository\AnimeRepository;
 use MoView\Repository\SessionRepository;
 use MoView\Repository\UserRepository;
+use MoView\Repository\WatchListRepository;
 use MoView\Service\SessionService;
 use MoView\Service\UserService;
+use MoView\Service\WatchListService;
 
 class UserController
 {
     private UserService $userService;
     private SessionService $sessionService;
+    private WatchListService $watchListService;
 
     public function __construct()
     {
@@ -27,6 +34,10 @@ class UserController
 
         $sessionRepository = new SessionRepository($connection);
         $this->sessionService = new SessionService($sessionRepository, $userRepository);
+
+        $animeRepository = new AnimeRepository($connection);
+        $watchListRepository = new WatchListRepository($connection);
+        $this->watchListService = new WatchListService($watchListRepository,$animeRepository,$userRepository);
     }
 
     public function register(): void
@@ -156,11 +167,63 @@ class UserController
     public function userProfile(): void
     {
         $user = $this->sessionService->current();
-        View::render("User/profile", [
+        $userId = new UserProfileWatchlistRequest();
+        $userId->userId = $user->id;
+        $response = $this->watchListService->fetchUserWatchlist($userId);
+
+        $data = [
             'title' => 'User profile',
             'user' => [
                 'name' => $user->name,
             ]
-        ]);
+        ];
+
+        if(isset($response->watchList))
+        {
+            $data["watchlist"] = $response->watchList;
+        }
+
+        View::render("User/profile", $data);
+    }
+
+    public function postWatchlistUpdate(): void
+    {
+        $user = $this->sessionService->current();
+        $request = new UserUpdateWatchlistRequest();
+        $request->watchListId = (int) $_POST['watchListId'];
+        $request->userId = $user->id;
+        $request->animeId = (int) $_POST['animeId'];
+        $request->status = $_POST['status'];
+
+        try {
+            $this->watchListService->updateWatchList($request);
+            View::redirect('/users/profile');
+        } catch (ValidationException $exception) {
+
+            // unhandle error
+
+            View::redirect('/users/profile');
+        }
+    }
+
+    public function postWatchlistDelete(): void
+    {
+        $user = $this->sessionService->current();
+        $animeId = (int) htmlspecialchars($_POST['animeId']);
+
+        try {
+
+            $request = new UserDeleteWatchlistRequest();
+            $request->userId = $user->id;
+            $request->animeId = $animeId;
+
+            $this->watchListService->deleteWatchList($request);
+            View::redirect('/users/profile');
+        } catch (ValidationException $exception) {
+
+            // unhandle error
+
+            View::redirect('/users/profile');
+        }
     }
 }

@@ -3,21 +3,26 @@
 namespace MoView\Controller;
 use MoView\App\View;
 use MoView\Config\Database;
+use MoView\Domain\WatchList;
 use MoView\Exception\ValidationException;
 use MoView\Model\UserCommentAnimeRequest;
+use MoView\Model\UserCreateWatchListRequest;
 use MoView\Repository\AnimeRepository;
 use MoView\Repository\CommentRepository;
 use MoView\Repository\SessionRepository;
 use MoView\Repository\UserRepository;
-use MoView\Service\AnimeServices;
-use MoView\Service\CommentServices;
+use MoView\Repository\WatchListRepository;
+use MoView\Service\AnimeService;
+use MoView\Service\CommentService;
 use MoView\Service\SessionService;
+use MoView\Service\WatchListService;
 
 class HomeController
 {
     private SessionService $sessionService;
-    private AnimeServices $animeServices;
-    private CommentServices $commentServices;
+    private AnimeService $animeServices;
+    private CommentService $commentServices;
+    private WatchListService $watchListService;
 
     public function __construct()
     {
@@ -28,8 +33,11 @@ class HomeController
 
         $commentRepository = new CommentRepository($connection);
         $animeRepository = new AnimeRepository($connection);
-        $this->animeServices = new AnimeServices();
-        $this->commentServices = new CommentServices($commentRepository,$userRepository,$animeRepository);
+        $this->animeServices = new AnimeService($commentRepository);
+        $this->commentServices = new CommentService($commentRepository,$userRepository,$animeRepository);
+
+        $watchListRepository = new WatchListRepository($connection);
+        $this->watchListService =  new WatchListService($watchListRepository,$animeRepository,$userRepository);
     }
 
     public function Error404(): void
@@ -58,13 +66,15 @@ class HomeController
     public function anime(): void
     {
         $user = $this->sessionService->current();
-        $topScore = $this->animeServices->searchAnime("type=tv&order_by=score&sort=desc")['data'];
-        $upComing = $this->animeServices->searchAnime("status=upcoming&type=tv")['data'];
+        $topScore = $this->animeServices->getAnimeFile(__DIR__ . "/../Data/topScoreAnime.json");
+        $upComing = $this->animeServices->getAnimeFile(__DIR__ . "/../Data/airingAnime.json");
+        $commentedAnime = $this->animeServices->getPopularAnimeCommented();
         $data = [
             "title" => "MaouNime anime wiki",
             'anime' => [
                 "topScore" => $topScore,
                 "upComing" => $upComing,
+              "comented" => $commentedAnime,
             ],
         ];
 
@@ -77,37 +87,38 @@ class HomeController
         View::render('Anime/index', $data);
     }
 
-    public function searchAnime(): void
-    {
-        $queryParams = [
-            "q" => htmlspecialchars($_GET["title"]),
-            "type" => htmlspecialchars($_GET["type"]),
-            "min_score" => htmlspecialchars($_GET["score"]),
-            "status" => htmlspecialchars($_GET["status"]),
-            "rating" => htmlspecialchars($_GET["rating"]),
-            "page"=> htmlspecialchars($_GET["page"]),
-            "order_by" => htmlspecialchars($_GET["order_by"]),
-            "sort" => htmlspecialchars($_GET["sort"]),
-        ];
+  public function searchAnime(): void
+  {
+    $queryParams = [
+      "q" => htmlspecialchars($_GET["title"] ?? ''),
+      "type" => htmlspecialchars($_GET["type"] ?? ''),
+      "min_score" => htmlspecialchars($_GET["score"] ?? ''),
+      "status" => htmlspecialchars($_GET["status"] ?? ''),
+      "rating" => htmlspecialchars($_GET["rating"] ?? ''),
+      "page" => htmlspecialchars($_GET["page"] ?? 1),
+      "order_by" => htmlspecialchars($_GET["order_by"] ?? ''),
+      "sort" => htmlspecialchars($_GET["sort"] ?? 'asc'),
+    ];
 
-        // Menggabungkan parameter menjadi string query
-        $keyword = http_build_query($queryParams);
+    // Menggabungkan parameter menjadi string query
+    $keyword = http_build_query($queryParams);
 
-        $user = $this->sessionService->current();
-        $anime = $this->animeServices->searchAnime($keyword);
-        $data = [
-            "title" => "MaouNime anime wiki",
-            'anime' => $anime,
-        ];
+    $user = $this->sessionService->current();
+    $anime = $this->animeServices->searchAnime($keyword);
+    $data = [
+      "title" => "MaouNime anime wiki",
+      'anime' => $anime,
+    ];
 
-        if ($user !== null) {
-            $data["user"] = [
-                "name" => $user->name,
-            ];
-        }
-
-        View::render('Anime/search', $data);
+    if ($user !== null) {
+      $data["user"] = [
+        "name" => $user->name,
+      ];
     }
+
+    View::render('Anime/search', $data);
+  }
+
 
   public function detailAnime($id): void
   {
@@ -146,14 +157,8 @@ class HomeController
     $date = new \DateTime();
     $user = $this->sessionService->current();
 
-    if ($user === null) {
-      // Redirect to login page if user is not logged in
-      View::redirect('/users/login');
-      return;
-    }
-
     $request = new UserCommentAnimeRequest();
-    $request->animeId = htmlspecialchars($_POST["animeId"]);
+    $request->animeId = (int) htmlspecialchars($_POST["animeId"]);
     $request->animeTitle = htmlspecialchars($_POST["animeTitle"]);
     $request->comment = htmlspecialchars($_POST["comment"]);
     $request->userId = $user->id;
@@ -164,6 +169,31 @@ class HomeController
       View::redirect("/anime/detail/" . $request->animeId);
     } catch (ValidationException $exception) {
       // Jika ada error, kembalikan ke halaman detail dengan pesan error
+
+        // unhandle error
+
+      View::redirect("/anime/detail/" . $request->animeId);
+    }
+  }
+
+  public function postWatchlist():void {
+    $user = $this->sessionService->current();
+
+    $request = new UserCreateWatchListRequest();
+    $request->userId = $user->id;
+    $request->animeId = (int) htmlspecialchars($_POST["animeId"]);
+    $request->img = htmlspecialchars($_POST['img']);
+    $request->status = "plan to watch";
+    $request->animeTitle = htmlspecialchars($_POST['animeTitle']);
+
+    try{
+      $this->watchListService->createWatchList($request);
+      
+      View::redirect("/anime/detail/" . $request->animeId);
+    }catch(ValidationException $err){
+
+      // unhandle error
+
       View::redirect("/anime/detail/" . $request->animeId);
     }
   }

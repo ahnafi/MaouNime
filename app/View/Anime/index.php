@@ -35,7 +35,7 @@ include_once __DIR__ . "/../Components/navbar.php";
         <div class="anime-slide col-12 gap-3 d-flex overflow-x-scroll ">
             <?php foreach ($topScore as $animeItem): ?>
                 <div class="card col-6" style="width: 16rem;">
-                    <img src="<?= $animeItem['images']['webp']['image_url'] ?>" class="card-img-top"
+                    <img src="<?= $animeItem['images']['webp']['image_url'] ?>" loading="lazy" class="card-img-top"
                         alt="image <?= $animeItem['title'] ?>">
                     <div class="card-body">
                         <h5 class="card-title"><?= htmlspecialchars($animeItem['title'], ENT_QUOTES, 'UTF-8') ?></h5>
@@ -60,7 +60,7 @@ include_once __DIR__ . "/../Components/navbar.php";
         <div class="anime-slide col-12 gap-3 d-flex overflow-x-scroll ">
             <?php foreach ($upComing as $animeItem): ?>
                 <div class="card col-6" style="width: 16rem;">
-                    <img src="<?= $animeItem['images']['webp']['image_url'] ?>" class="card-img-top"
+                    <img src="<?= $animeItem['images']['webp']['image_url'] ?>" loading="lazy" class="card-img-top"
                         alt="image <?= $animeItem['title'] ?>">
                     <div class="card-body">
                         <h5 class="card-title"><?= htmlspecialchars($animeItem['title'], ENT_QUOTES, 'UTF-8') ?></h5>
@@ -75,7 +75,26 @@ include_once __DIR__ . "/../Components/navbar.php";
     <!--  comented anime -->
     <?php if (isset($comented)): ?>
 
-        <h1>comented</h1>
+        <div class="row py-3">
+            <div class="col-6">
+                <h2>Top Commented Anime</h2>
+            </div>
+        </div>
+        <div class="row py-3">
+            <div class="anime-slide col-12 gap-3 d-flex overflow-x-scroll ">
+              <?php foreach ($comented as $animeItem): ?>
+                  <div class="card col-6" style="width: 16rem;">
+                      <img src="<?= $animeItem['images']['webp']['image_url'] ?>" loading="lazy" class="card-img-top"
+                           alt="image <?= $animeItem['title'] ?>">
+                      <div class="card-body">
+                          <h5 class="card-title"><?= htmlspecialchars($animeItem['title'], ENT_QUOTES, 'UTF-8') ?></h5>
+                          <p class="card-text"><?= htmlspecialchars($animeItem['score'], ENT_QUOTES, 'UTF-8') ?></p>
+                          <a href="/anime/detail/<?= $animeItem['mal_id'] ?>" class="btn btn-primary">More Info</a>
+                      </div>
+                  </div>
+              <?php endforeach; ?>
+            </div>
+        </div>
 
     <?php endif; ?>
     <!-- end  -->

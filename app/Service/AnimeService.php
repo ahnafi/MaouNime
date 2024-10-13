@@ -2,19 +2,17 @@
 
 namespace MoView\Service;
 
-use MoView\Domain\Anime;
-use MoView\Repository\AnimeRepository;
+use MoView\Repository\CommentRepository;
 
-class AnimeServices
+class AnimeService
 {
 
     private string $apiBaseUrl = 'https://api.jikan.moe/v4';
-//    public AnimeRepository $animeRepository;
-//
-//  public function __construct(AnimeRepository $animeRepository)
-//  {
-//    $this->animeRepository = $animeRepository;
-//  }
+    private CommentRepository $commentRepository;
+
+    public function __construct(CommentRepository $commentRepository){
+      $this->commentRepository = $commentRepository;
+    }
 
 
   public function searchAnime(string $keyword) : mixed
@@ -59,20 +57,33 @@ class AnimeServices
         return json_decode($response, true);
     }
 
-//    public function DBanimeSave() {
-//
-//      try {
-//        $anime = new Anime();
-//
-//
-//        $this->animeRepository->save();
-//
-//      }catch (\Exception $e){
-//
-//      }
-//    }
-//
-//    private function validateAnimeSaveRequest (){
-//
-//    }
+    public function getAnimeFile(string $path):array {
+      // $pathFile = __DIR__ . "/../Data/topScoreAnime.json";
+      $jsonData = file_get_contents($path);
+      
+      if($jsonData === false){
+        return [];
+      }
+
+      return json_decode($jsonData, true);
+    }
+
+    public function getPopularAnimeCommented(): array
+    {
+      $animesId = $this->commentRepository->popularCommentAnimeID();
+
+      if(empty($animesId)){
+        return [];
+      }
+
+      $animes = [];
+
+      foreach ($animesId as $animeId){
+        $result = $this->getAnimeById($animeId);
+
+        $animes[] = $result['data'];
+      }
+
+      return $animes;
+    }
 }

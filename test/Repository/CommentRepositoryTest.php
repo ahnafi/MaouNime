@@ -93,9 +93,9 @@ class CommentRepositoryTest extends TestCase
     $this->commentRepository->save($comment);
 
     $result = $this->commentRepository->getCommentByAnimeId($anime->id);
-    self::assertEquals("Test comment 1", $result[0]->comment);
-    self::assertEquals($result[1]->comment,$comment->comment);
-    self::assertEquals($result[1]->animeId,$comment->animeId);
+    self::assertEquals("Test comment 2", $result[0]->comment);
+    self::assertEquals($result[0]->comment,$comment->comment);
+    self::assertEquals($result[0]->animeId,$comment->animeId);
   }
 
   public function testGetCommentsByAnimeIdNull(){
@@ -134,6 +134,48 @@ class CommentRepositoryTest extends TestCase
 
     $find = $this->commentRepository->getCommentByAnimeId($anime->id);
     self::assertNull($find);
+  }
+
+  public function testGetPopularAnimeID (){
+    $anime = new Anime();
+    $anime->id = 21;
+    $anime->title = "Test anime";
+
+    $user = new User();
+    $user->id = "budi";
+    $user->name = "budi";
+    $user->password = "qwerty";
+
+    $this->animeRepository->save($anime);
+    $this->userRepository->save($user);
+
+    $comment = new Comment();
+    $comment->userId = $user->id;
+    $comment->animeId = $anime->id;
+    $comment->comment = "Test comment 1";
+    $date = new DateTime();
+    $comment->commentedAt = $date->format("Y-m-d H:i:s");
+
+    for($i = 1; $i <= 5; $i++){
+      $this->commentRepository->save($comment);
+    }
+
+    $anime->id = 22;
+    $comment->animeId = $anime->id;
+    $this->animeRepository->save($anime);
+    $comment->comment = "Test comment 2";
+
+    for($i = 1; $i <= 3; $i++){
+      $this->commentRepository->save($comment);
+    }
+
+    $rows = $this->commentRepository->popularCommentAnimeID();
+
+    var_dump($rows);
+
+    self::assertEquals(21,$rows[0]);
+    self::assertEquals(22,$rows[1]);
+
   }
 
 }

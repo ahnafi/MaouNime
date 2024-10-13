@@ -7,5 +7,6 @@ class WatchList
   public int $id;
   public string $userId;
   public int $animeId;
-  public string $addedAt;
+  public string $status;
+  public string $img;
 }

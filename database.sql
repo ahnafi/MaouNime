@@ -42,7 +42,8 @@ CREATE TABLE watchlist (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id VARCHAR(255) NOT NULL,
     anime_id INT NOT NULL,
-    added_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    status varchar(30) NOT NULL,
+    img varchar(255) NOT NULL ,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (anime_id) REFERENCES animes(id) ON DELETE CASCADE,
     UNIQUE (user_id, anime_id) -- Agar user tidak menambahkan anime yang sama lebih dari sekali

@@ -20,6 +20,7 @@ Router::add("GET","/anime",HomeController::class,"anime");
 Router::add("GET","/anime/detail/([0-9]*)",HomeController::class,"detailAnime");
 Router::add("GET","/anime/search",HomeController::class,"searchAnime");
 Router::add("POST", "/anime/comment", HomeController::class, "postComment", [MustLoginMiddleware::class]);
+Router::add("POST","/anime/watchlist",HomeController::class,"postWatchlist",[MustLoginMiddleware::class]);
 
 //router user
 Router::add("GET","/users/profile",UserController::class,"userProfile",[MustLoginMiddleware::class]);
@@ -32,6 +33,8 @@ Router::add("POST","/users/login",UserController::class,"postLogin",[MustNotLogi
 Router::add("POST","/users/register",UserController::class,"postRegister",[MustNotLoginMiddleware::class]);
 Router::add("POST","/users/update",UserController::class,"postUpdateProfile",[mustLoginMiddleware::class]);
 Router::add("POST","/users/password",UserController::class,"postUpdatePassword",[mustLoginMiddleware::class]);
+Router::add("POST","/users/watchlist/update",UserController::class,"postWatchlistUpdate",[MustLoginMiddleware::class]);
+Router::add("POST","/users/watchlist/delete",UserController::class,"postWatchlistDelete",[MustLoginMiddleware::class]);
 
 //error
 Router::add("GET","/error",HomeController::class,"error404");

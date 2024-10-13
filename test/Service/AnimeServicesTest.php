@@ -6,10 +6,10 @@ use PHPUnit\Framework\TestCase;
 
 class AnimeServicesTest extends TestCase
 {
-    public AnimeServices $animeServices;
+    public AnimeService $animeServices;
 
     public function setUp():void {
-        $this->animeServices = new AnimeServices();
+        $this->animeServices = new AnimeService();
     }
 
     function testGetAnimeAiring()
