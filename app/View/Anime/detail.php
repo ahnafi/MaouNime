@@ -4,6 +4,7 @@ $anime = $model['anime']['data'] ?? [];
 $comments = $model['comments'] ?? [];
 $rating = $model['rating']->rating ?? null;
 $score = $model['rating']->score ?? null;
+$localScore = $rating->rating ?? 0;
 
 // navbar taruh di awal php biar gak error
 include_once __DIR__ . "/../Components/navbar.php";
@@ -48,16 +49,19 @@ include_once __DIR__ . "/../Components/navbar.php";
 
         <form action="/anime/rating" method="post" id="ratingForm" class="col-2">
           <select name="rating" class="form-select" aria-label="Default select example" onchange="submitRatingForm()">
-            <option value="10" <?= $rating->rating === 10 ? 'selected' : '' ?>>10</option>
-            <option value="9" <?= $rating->rating === 9 ? 'selected' : '' ?>>9</option>
-            <option value="8" <?= $rating->rating === 8 ? 'selected' : '' ?>>8</option>
-            <option value="7" <?= $rating->rating === 7 ? 'selected' : '' ?>>7</option>
-            <option value="6" <?= $rating->rating === 6 ? 'selected' : '' ?>>6</option>
-            <option value="5" <?= $rating->rating === 5 ? 'selected' : '' ?>>5</option>
-            <option value="4" <?= $rating->rating === 4 ? 'selected' : '' ?>>4</option>
-            <option value="3" <?= $rating->rating === 3 ? 'selected' : '' ?>>3</option>
-            <option value="2" <?= $rating->rating === 2 ? 'selected' : '' ?>>2</option>
-            <option value="1" <?= $rating->rating === 1 ? 'selected' : '' ?>>1</option>
+            <option value="10" <?= $localScore === 10 ? 'selected' : '' ?>>10</option>
+            <option value="9" <?= $localScore === 9 ? 'selected' : '' ?>>9</option>
+            <option value="8" <?= $localScore === 8 ? 'selected' : '' ?>>8</option>
+            <option value="7" <?= $localScore === 7 ? 'selected' : '' ?>>7</option>
+            <option value="6" <?= $localScore === 6 ? 'selected' : '' ?>>6</option>
+            <option value="5" <?= $localScore === 5 ? 'selected' : '' ?>>5</option>
+            <option value="4" <?= $localScore === 4 ? 'selected' : '' ?>>4</option>
+            <option value="3" <?= $localScore === 3 ? 'selected' : '' ?>>3</option>
+            <option value="2" <?= $localScore === 2 ? 'selected' : '' ?>>2</option>
+            <option value="1" <?= $localScore === 1 ? 'selected' : '' ?>>1</option>
+            <?php if($localScore == 0 ) : ?>
+            <option value="0" selected>0</option>
+            <?php endif; ?>
           </select>
           <input type="hidden" name="animeId" value="<?= $anime["mal_id"] ?>">
           <input type="hidden" name="animeTitle" value="<?= $anime["title"] ?>">
@@ -74,12 +78,12 @@ include_once __DIR__ . "/../Components/navbar.php";
           <!-- Hidden input for anime title -->
           <input type="hidden" name="animeTitle" value="<?= htmlspecialchars($anime['title'], ENT_QUOTES, 'UTF-8') ?>">
 
-          <div class="form-group">
+          <div class="form-group ">
             <label for="comment">Add a Comment:</label>
             <textarea class="form-control" id="comment" name="comment" rows="3" maxlength="500" required></textarea>
           </div>
 
-          <button type="submit" class="btn btn-secondary">Submit Comment</button>
+          <button type="submit" class="btn btn-secondary my-2">Submit Comment</button>
         </form>
 
 

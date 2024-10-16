@@ -1,10 +1,10 @@
 -- Membuat database moview
-CREATE DATABASE moview;
+CREATE DATABASE maounime;
 
-CREATE DATABASE moview_test;
+-- CREATE DATABASE maounime_test;
 
 -- Menggunakan database moview
-USE moview;
+USE maounime;
 
 -- Tabel users untuk menyimpan data pengguna
 CREATE TABLE users (

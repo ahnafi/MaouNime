@@ -34,7 +34,8 @@ class RatingRepository
         
         try {
             if ($row = $statement->fetch()) {
-                return round($row[0],2);
+                $averageRating = $row[0];
+                return $averageRating !== null ? round($averageRating, 2) : null;
             } else {
                 return null;
             }
@@ -42,6 +43,7 @@ class RatingRepository
             $statement->closeCursor();
         }
     }
+    
 
     public function findRating(Rating $rating): ?Rating
     {

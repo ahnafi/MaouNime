@@ -39,7 +39,7 @@ include_once __DIR__ . "/../Components/navbar.php";
                         alt="image <?= $animeItem['title'] ?>">
                     <div class="card-body">
                         <h5 class="card-title"><?= htmlspecialchars($animeItem['title'], ENT_QUOTES, 'UTF-8') ?></h5>
-                        <p class="card-text"><?= htmlspecialchars($animeItem['score'], ENT_QUOTES, 'UTF-8') ?></p>
+                        <p class="card-text">Global Score <?= htmlspecialchars($animeItem['score'], ENT_QUOTES, 'UTF-8') ?></p>
                         <a href="/anime/detail/<?= $animeItem['mal_id'] ?>" class="btn btn-primary">More Info</a>
                     </div>
                 </div>
@@ -64,7 +64,6 @@ include_once __DIR__ . "/../Components/navbar.php";
                         alt="image <?= $animeItem['title'] ?>">
                     <div class="card-body">
                         <h5 class="card-title"><?= htmlspecialchars($animeItem['title'], ENT_QUOTES, 'UTF-8') ?></h5>
-                        <p class="card-text"><?= htmlspecialchars($animeItem['score'], ENT_QUOTES, 'UTF-8') ?></p>
                         <a href="/anime/detail/<?= $animeItem['mal_id'] ?>" class="btn btn-primary">More Info</a>
                     </div>
                 </div>
@@ -73,7 +72,7 @@ include_once __DIR__ . "/../Components/navbar.php";
     </div>
     <!-- end tile -->
     <!--  comented anime -->
-    <?php if (isset($comented)): ?>
+    <?php if ($comented): ?>
 
         <div class="row py-3">
             <div class="col-6">
