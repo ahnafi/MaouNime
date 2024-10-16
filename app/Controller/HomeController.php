@@ -3,17 +3,21 @@
 namespace MoView\Controller;
 use MoView\App\View;
 use MoView\Config\Database;
-use MoView\Domain\WatchList;
+use MoView\Domain\Rating;
 use MoView\Exception\ValidationException;
 use MoView\Model\UserCommentAnimeRequest;
 use MoView\Model\UserCreateWatchListRequest;
+use MoView\Model\UserGetCurrentRatingRequest;
+use MoView\Model\UserRatingAnimeRequest;
 use MoView\Repository\AnimeRepository;
 use MoView\Repository\CommentRepository;
+use MoView\Repository\RatingRepository;
 use MoView\Repository\SessionRepository;
 use MoView\Repository\UserRepository;
 use MoView\Repository\WatchListRepository;
 use MoView\Service\AnimeService;
 use MoView\Service\CommentService;
+use MoView\Service\RatingService;
 use MoView\Service\SessionService;
 use MoView\Service\WatchListService;
 
@@ -23,6 +27,7 @@ class HomeController
     private AnimeService $animeServices;
     private CommentService $commentServices;
     private WatchListService $watchListService;
+    private RatingService $ratingService;
 
     public function __construct()
     {
@@ -38,6 +43,9 @@ class HomeController
 
         $watchListRepository = new WatchListRepository($connection);
         $this->watchListService =  new WatchListService($watchListRepository,$animeRepository,$userRepository);
+
+        $ratingRepository = new RatingRepository($connection);
+        $this->ratingService = new RatingService($ratingRepository,$animeRepository,$userRepository);
     }
 
     public function Error404(): void
@@ -130,6 +138,13 @@ class HomeController
     // Ambil komentar berdasarkan ID anime
     $comments = $this->commentServices->getCommentByAnimeId($id);
 
+    // ambil rata rata anime rating
+    $rating = new UserGetCurrentRatingRequest();
+    $rating->animeId = $id;
+    $rating->userId = $user->id;
+
+    $rating = $this->ratingService->currentRating($rating);
+
     // Jika anime tidak ditemukan atau ada kesalahan status, redirect ke halaman anime
     if (isset($anime["status"])) {
       View::redirect('/anime');
@@ -139,7 +154,8 @@ class HomeController
     $data = [
       "title" => "MaouNime anime wiki",
       'anime' => $anime,
-      'comments' => $comments, // Tambahkan komentar ke dalam data yang dikirim ke view
+      'comments' => $comments,
+      'rating' => $rating,
     ];
 
     // Jika user login, tambahkan informasi user
@@ -189,6 +205,26 @@ class HomeController
     try{
       $this->watchListService->createWatchList($request);
       
+      View::redirect("/anime/detail/" . $request->animeId);
+    }catch(ValidationException $err){
+
+      // unhandle error
+
+      View::redirect("/anime/detail/" . $request->animeId);
+    }
+  }
+
+  public function postRating (){
+    $user = $this->sessionService->current();
+
+    $request = new UserRatingAnimeRequest();
+    $request->userId = $user->id;
+    $request->animeId = (int) htmlspecialchars($_POST["animeId"]);
+    $request->rating = (int) htmlspecialchars($_POST["rating"]);
+    $request->animeTitle = htmlspecialchars($_POST["animeTitle"]);
+
+    try{
+      $this->ratingService->ratingAnime($request);
       View::redirect("/anime/detail/" . $request->animeId);
     }catch(ValidationException $err){
 

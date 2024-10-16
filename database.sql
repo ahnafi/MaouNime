@@ -55,7 +55,6 @@ CREATE TABLE ratings (
     user_id VARCHAR(255) NOT NULL,
     anime_id INT NOT NULL,
     rating INT NOT NULL CHECK (rating BETWEEN 1 AND 10), -- Rating antara 1 sampai 5
-    rated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (anime_id) REFERENCES animes(id) ON DELETE CASCADE,
     UNIQUE (user_id, anime_id) -- Agar seorang user hanya dapat memberikan rating sekali pada anime yang sama
