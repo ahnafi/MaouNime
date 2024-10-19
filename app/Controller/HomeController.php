@@ -98,25 +98,25 @@ class HomeController
 
   public function searchAnime(): void
   {
-    $queryParams = [
-      "q" => htmlspecialchars($_GET["title"] ?? ''),
-      "type" => htmlspecialchars($_GET["type"] ?? ''),
-      "min_score" => htmlspecialchars($_GET["score"] ?? ''),
-      "status" => htmlspecialchars($_GET["status"] ?? ''),
-      "rating" => htmlspecialchars($_GET["rating"] ?? ''),
-      "page" => htmlspecialchars($_GET["page"] ?? 1),
-      "order_by" => htmlspecialchars($_GET["order_by"] ?? ''),
-      "sort" => htmlspecialchars($_GET["sort"] ?? 'asc'),
-    ];
+//    $queryParams = [
+//      "q" => htmlspecialchars($_GET["title"] ?? ''),
+//      "type" => htmlspecialchars($_GET["type"] ?? ''),
+//      "min_score" => htmlspecialchars($_GET["score"] ?? ''),
+//      "status" => htmlspecialchars($_GET["status"] ?? ''),
+//      "rating" => htmlspecialchars($_GET["rating"] ?? ''),
+//      "page" => htmlspecialchars($_GET["page"] ?? 1),
+//      "order_by" => htmlspecialchars($_GET["order_by"] ?? ''),
+//      "sort" => htmlspecialchars($_GET["sort"] ?? 'asc'),
+//    ];
 
     // Menggabungkan parameter menjadi string query
-    $keyword = http_build_query($queryParams);
+//    $keyword = http_build_query($queryParams);
 
     $user = $this->sessionService->current();
-    $anime = $this->animeServices->searchAnime($keyword);
+//    $anime = $this->animeServices->searchAnime($keyword);
     $data = [
       "title" => "MaouNime anime wiki",
-      'anime' => $anime,
+//      'anime' => $anime,
     ];
 
     if ($user !== null) {

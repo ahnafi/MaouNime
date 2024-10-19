@@ -12,6 +12,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.14.3/dist/sweetalert2.all.min.js
     <link href="
 https://cdn.jsdelivr.net/npm/sweetalert2@11.14.3/dist/sweetalert2.min.css
 " rel="stylesheet">
+    <script src="/script/jquery-3.7.1.min.js"></script>
 
     <title><?= 'MaouNime | ' . $model['title'] ?? 'Maounime' ?></title>
 </head>
