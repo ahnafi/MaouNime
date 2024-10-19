@@ -22,7 +22,8 @@
     "require": {
         "php": ">=8.0",
       "ext-pdo": "*",
-      "ext-curl": "*"
+      "ext-curl": "*",
+        "twbs/bootstrap": "5.3.3"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5"

@@ -14,11 +14,11 @@ unset($queryParams['page']);
 include_once __DIR__ . "/../Components/navbar.php";
 ?>
 
-<div class="container">
+<div class="container ">
     <?php include_once __DIR__ . "/../Components/search.php"; ?>
     <div class="row py-2">
         <div class="col">
-            <?= $_GET ? 'Search of ' . $_GET['title'] : "Search Anime" ?>
+            <?= isset($_GET["title"]) ? 'Search of ' . $_GET['title'] : "Search Anime" ?>
         </div>
     </div>
     <div class="row d-flex">

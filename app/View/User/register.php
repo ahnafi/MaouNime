@@ -1,9 +1,4 @@
-<?php
 
-use MoView\App\Flasher;
-Flasher::FLASH();
-
-?>
 <div>
     halaman register
 

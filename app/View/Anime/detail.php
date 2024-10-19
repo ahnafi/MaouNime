@@ -1,7 +1,5 @@
 <?php
 
-use MoView\App\Flasher;
-
 $anime = $model['anime']['data'] ?? [];
 $comments = $model['comments'] ?? [];
 $rating = $model['rating']->rating ?? null;
@@ -11,7 +9,7 @@ $localScore = $rating->rating ?? 0;
 // navbar taruh di awal php biar gak error
 include_once __DIR__ . "/../Components/navbar.php";
 
-Flasher::FLASH();
+
 ?>
 
 <div class="container mt-5">
@@ -75,7 +73,7 @@ Flasher::FLASH();
             <?php endif; ?>
             <!-- Comments Section -->
             <div class="mt-4">
-                <h4>Comments</h4>
+                <h4>Comments  <span class=""><?= count($comments) != 0 ? count($comments) : "" ?></span></h4>
                 <?php if (isset($model['user'])) : ?>
                     <form action="/anime/comment" method="POST" class="mb-3" onsubmit="return validateComment()">
                         <!-- Hidden input for anime ID -->

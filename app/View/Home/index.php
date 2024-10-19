@@ -1,7 +1,4 @@
 <?php
-use MoView\App\Flasher;
-Flasher::FLASH();
-
  include_once __DIR__ . "/../Components/navbar.php";
 ?>
 <div>

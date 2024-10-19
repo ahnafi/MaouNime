@@ -1,9 +1,4 @@
-<?php
 
-use MoView\App\Flasher;
-Flasher::flash();
-
-?>
 <div>
     <form method="post"  action="/users/password">
         <input type="text" name="id" placeholder="id" disabled value="<?= $model['user']['id'] ?? '' ?>" >

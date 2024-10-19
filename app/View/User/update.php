@@ -1,9 +1,4 @@
-<?php
 
-use MoView\App\Flasher;
-Flasher::flash();
-
-?>
 <div>
     <form method="post"  action="/users/update">
         <input type="text" name="id" placeholder="id" disabled value="<?= $model['user']['id'] ?? '' ?>" >

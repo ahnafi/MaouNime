@@ -1,8 +1,5 @@
 <?php
 
-use MoView\App\Flasher;
-Flasher::FLASH();
-
 $topScore = array_slice($model['anime']['topScore'], 0, 8) ?? [];
 $upComing = array_slice($model['anime']['upComing'], 0, 8) ?? [];
 $comented = $model['anime']['comented'] ?? null;
@@ -20,7 +17,7 @@ include_once __DIR__ . "/../Components/navbar.php";
         scrollbar-width: auto;
     }
 </style>
-<div class="container-fluid">
+<div class="container-fluid ">
     <!-- search bar -->
     <?php include_once __DIR__ . "/../Components/search.php"; ?>
     <!-- end search bar -->

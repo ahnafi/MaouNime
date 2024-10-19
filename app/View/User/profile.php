@@ -1,10 +1,7 @@
 <?php
 
-use MoView\App\Flasher;
-Flasher::FLASH();
-
 $watchlists = $model['watchlist'] ?? [];
-
+include_once __DIR__ . "/../Components/navbar.php";
 ?>
 
 <div>
