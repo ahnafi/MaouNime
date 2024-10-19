@@ -25,6 +25,7 @@ Router::add("GET","/anime/search",HomeController::class,"searchAnime");
 Router::add("POST", "/anime/comment", HomeController::class, "postComment", [MustLoginMiddleware::class]);
 Router::add("POST","/anime/watchlist",HomeController::class,"postWatchlist",[MustLoginMiddleware::class]);
 Router::add("POST","/anime/rating",HomeController::class,"postRating",[MustLoginMiddleware::class]);
+Router::add("POST", "/anime/comment/delete", HomeController::class, "postDeleteComment", [MustLoginMiddleware::class]);
 
 //router user
 Router::add("GET","/users/profile",UserController::class,"userProfile",[MustLoginMiddleware::class]);

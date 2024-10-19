@@ -12,7 +12,7 @@ include_once __DIR__ . "/../Components/navbar.php";
 
 ?>
 
-<div class="container mt-5">
+<div class="container my-5">
 
     <?php if (isset($model['anime']["status"])): ?>
 
@@ -71,46 +71,60 @@ include_once __DIR__ . "/../Components/navbar.php";
                     </form>
                 </div>
             <?php endif; ?>
-            <!-- Comments Section -->
-            <div class="mt-4">
-                <h4>Comments  <span class=""><?= count($comments) != 0 ? count($comments) : "" ?></span></h4>
-                <?php if (isset($model['user'])) : ?>
-                    <form action="/anime/comment" method="POST" class="mb-3" onsubmit="return validateComment()">
-                        <!-- Hidden input for anime ID -->
-                        <input type="hidden" name="animeId"
-                               value="<?= htmlspecialchars($anime['mal_id'], ENT_QUOTES, 'UTF-8') ?>">
 
-                        <!-- Hidden input for anime title -->
-                        <input type="hidden" name="animeTitle"
-                               value="<?= htmlspecialchars($anime['title'], ENT_QUOTES, 'UTF-8') ?>">
+        </div>
+        <!-- Comments Section -->
+        <div class="mt-4">
+            <h4>Comments <span class=""><?= count($comments) != 0 ? count($comments) : "" ?></span></h4>
+            <?php if (isset($model['user'])) : ?>
+                <form action="/anime/comment" method="POST" class="mb-3" onsubmit="return validateComment()">
+                    <!-- Hidden input for anime ID -->
+                    <input type="hidden" name="animeId"
+                           value="<?= htmlspecialchars($anime['mal_id'], ENT_QUOTES, 'UTF-8') ?>">
 
-                        <div class="form-group ">
-                            <label for="comment">Add a Comment:</label>
-                            <textarea class="form-control" id="comment" name="comment" rows="3" maxlength="500"
-                                      required></textarea>
-                        </div>
+                    <!-- Hidden input for anime title -->
+                    <input type="hidden" name="animeTitle"
+                           value="<?= htmlspecialchars($anime['title'], ENT_QUOTES, 'UTF-8') ?>">
 
-                        <button type="submit" class="btn btn-secondary my-2">Submit Comment</button>
-                    </form>
-                <?php endif; ?>
+                    <div class="form-group ">
+                        <label for="comment">Add a Comment:</label>
+                        <textarea class="form-control" id="comment" name="comment" rows="3" maxlength="500"
+                                  required></textarea>
+                    </div>
 
-                <!-- Display Existing Comments -->
-                <?php if (!empty($comments)): ?>
-                    <ul class="list-group">
-                        <?php foreach ($comments as $comment): ?>
-                            <li class="list-group-item d-flex justify-content-between">
-                                <p>
-                                    <strong><?= htmlspecialchars($comment->userId) ?>:</strong>
-                                    <?= htmlspecialchars($comment->comment) ?>
-                                </p>
-                                <span><?= $comment->commentedAt ?></span>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php else: ?>
-                    <p>No comments yet. Be the first to comment!</p>
-                <?php endif; ?>
-            </div>
+                    <button type="submit" class="btn btn-secondary my-2">Submit Comment</button>
+                </form>
+            <?php endif; ?>
+
+            <!-- Display Existing Comments -->
+            <?php if (!empty($comments)): ?>
+                <ul class="list-group">
+                    <?php foreach ($comments as $comment): ?>
+                        <li class="list-group-item d-flex align-items-center ">
+                            <p class="col-8">
+                                <strong><?= htmlspecialchars($comment->userId) ?>:</strong>
+                                <?= htmlspecialchars($comment->comment) ?>
+                            </p>
+                            <span class="col d-flex justify-content-end"><?= $comment->commentedAt ?></span>
+                            <?php if (isset($model['user']['id']) == $comment->userId) : ?>
+                                <form action="/anime/comment/delete" method="post" class="col-1 d-flex justify-content-center" onsubmit="return handleDelete(event)">
+                                    <input type="hidden" name="animeId" value="<?= $comment->animeId ?>">
+                                    <input type="hidden" name="commentId" value="<?= $comment->id ?>">
+                                    <button class="btn btn-outline-danger">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                             fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                                        </svg>
+                                    </button>
+                                </form>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php else: ?>
+                <p>No comments yet. Be the first to comment!</p>
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -130,5 +144,27 @@ include_once __DIR__ . "/../Components/navbar.php";
         }
 
         return true; // Allow form submission
+    }
+
+    function alertConfirm() {
+        return Swal.fire({
+            title: "Perhatian",
+            text: "Apakah kamu ingin menghapus komentar ini?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Iya",
+            cancelButtonText: "Batal"
+        }).then((result) => {
+            return result.isConfirmed; // Hanya mengembalikan true jika pengguna mengklik "Iya"
+        });
+    }
+    async function handleDelete(event) {
+        event.preventDefault(); // Mencegah form submit langsung
+        const confirmed = await alertConfirm(); // Tunggu hasil konfirmasi
+        if (confirmed) {
+            event.target.submit(); // Submit form jika dikonfirmasi
+        }
     }
 </script>

@@ -7,6 +7,7 @@ use MoView\Config\Database;
 use MoView\Exception\ValidationException;
 use MoView\Model\UserCommentAnimeRequest;
 use MoView\Model\UserCreateWatchListRequest;
+use MoView\Model\UserDeleteCommentRequest;
 use MoView\Model\UserGetCurrentRatingRequest;
 use MoView\Model\UserRatingAnimeRequest;
 use MoView\Repository\AnimeRepository;
@@ -168,6 +169,7 @@ class HomeController
             if ($user !== null) {
                 $data["user"] = [
                     "name" => $user->name,
+                    "id" => $user->id
                 ];
             }
 
@@ -247,6 +249,24 @@ class HomeController
 
       View::redirect("/anime/detail/" . $request->animeId);
     }
+  }
+
+  public function postDeleteComment (){
+        $user = $this->sessionService->current();
+
+        $request = new UserDeleteCommentRequest();
+        $request->userId = $user->id;
+        $request->animeId = (int) htmlspecialchars($_POST["animeId"]);
+        $request->id = (int) htmlspecialchars($_POST["commentId"]);
+
+      try {
+          $this->commentServices->deleteComment($request);
+          Flasher::setFlash("Success", "Komentar berhasil dihapus", "success");
+          View::redirect("/anime/detail/" . $request->animeId);
+      } catch (ValidationException $err) {
+          Flasher::setFlash("ERROR", $err->getMessage(), "error");
+          View::redirect("/anime/detail/" . $request->animeId);
+      }
   }
 
 }
