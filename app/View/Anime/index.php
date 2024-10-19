@@ -1,5 +1,8 @@
 <?php
 
+use MoView\App\Flasher;
+Flasher::FLASH();
+
 $topScore = array_slice($model['anime']['topScore'], 0, 8) ?? [];
 $upComing = array_slice($model['anime']['upComing'], 0, 8) ?? [];
 $comented = $model['anime']['comented'] ?? null;

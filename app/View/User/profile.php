@@ -1,5 +1,8 @@
 <?php
 
+use MoView\App\Flasher;
+Flasher::FLASH();
+
 $watchlists = $model['watchlist'] ?? [];
 
 ?>
@@ -56,7 +59,7 @@ $watchlists = $model['watchlist'] ?? [];
               </form>
             </td>
             <td class="col-md-2">
-              <form action="/users/watchlist/delete" method="post">
+              <form action="/users/watchlist/delete" method="post" onsubmit="return handleDelete(event)">
                 <input type="hidden" name="animeId" value="<?= $item->animeId ?>">
                 <button type="submit" class="btn btn-danger">Delete</button>
               </form>
@@ -73,4 +76,27 @@ $watchlists = $model['watchlist'] ?? [];
     // Submit form yang sesuai berdasarkan animeId
     document.getElementById(`watchlistForm-${animeId}`).submit();
   }
+
+  function alertConfirm() {
+      return Swal.fire({
+          title: "Perhatian",
+          text: "Apakah kamu ingin menghapus Watchlist ini?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Iya",
+          cancelButtonText: "Batal"
+      }).then((result) => {
+          return result.isConfirmed; // Hanya mengembalikan true jika pengguna mengklik "Iya"
+      });
+  }
+  async function handleDelete(event) {
+      event.preventDefault(); // Mencegah form submit langsung
+      const confirmed = await alertConfirm(); // Tunggu hasil konfirmasi
+      if (confirmed) {
+          event.target.submit(); // Submit form jika dikonfirmasi
+      }
+  }
+
 </script>

@@ -2,6 +2,7 @@
 
 namespace MoView\Controller;
 
+use MoView\App\Flasher;
 use MoView\App\View;
 use MoView\Config\Database;
 use MoView\Exception\ValidationException;
@@ -56,11 +57,12 @@ class UserController
 
         try {
             $this->userService->register($request);
+            Flasher::setFlash("success", "You have successfully registered","success");
             View::redirect('/users/login');
         } catch (ValidationException $exception) {
+            Flasher::setFlash("Gagal", $exception->getMessage(), "error");
             View::render("/User/register", [
                 'title' => 'Register new user',
-                'error' => $exception->getMessage()
             ]);
         }
     }
@@ -83,9 +85,9 @@ class UserController
             $this->sessionService->create($response->user->id);
             View::redirect($redirectUrl);
         } catch (ValidationException $exception) {
+            Flasher::setFlash("Login Gagal", $exception->getMessage(), "error");
             View::render("/User/login", [
                 'title' => 'Login',
-                'error' => $exception->getMessage()
             ]);
         }
     }
@@ -118,11 +120,12 @@ class UserController
 
         try {
             $this->userService->updateProfile($request);
-            View::redirect('/');
+            Flasher::setFlash("success", "Update Profile berhasil","success");
+            View::redirect('/users/profile');
         } catch (ValidationException $exception) {
+            Flasher::setFlash("Update Gagal", $exception->getMessage(), "error");
             View::render("User/update", [
                 'title' => 'Update profile',
-                'error' => $exception->getMessage(),
                 'user' => [
                     'id' => $user->id,
                     'name' => $_POST['name'],
@@ -152,11 +155,12 @@ class UserController
 
         try {
             $this->userService->updatePassword($request);
-            View::redirect('/');
+            Flasher::setFlash("success", "Password berhasil di update","success");
+            View::redirect('/users/profile');
         } catch (ValidationException $exception) {
+            Flasher::setFlash("Gagal", $exception->getMessage(), "error");
             View::render("User/password", [
                 'title' => 'Update password',
-                'error' => $exception->getMessage(),
                 'user' => [
                     'id' => $user->id,
                 ]
@@ -197,10 +201,11 @@ class UserController
 
         try {
             $this->watchListService->updateWatchList($request);
+            Flasher::setFlash("success", "Watchlist berhasil di update","success");
             View::redirect('/users/profile');
         } catch (ValidationException $exception) {
 
-            // unhandle error
+            Flasher::setFlash("Gagal update", $exception->getMessage(), "error");
 
             View::redirect('/users/profile');
         }
@@ -218,10 +223,11 @@ class UserController
             $request->animeId = $animeId;
 
             $this->watchListService->deleteWatchList($request);
+            Flasher::setFlash("success", "Watchlist berhasil di hapus","success");
             View::redirect('/users/profile');
         } catch (ValidationException $exception) {
 
-            // unhandle error
+            Flasher::setFlash("Gagal hapus", $exception->getMessage(), "error");
 
             View::redirect('/users/profile');
         }

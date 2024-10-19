@@ -14,6 +14,9 @@ Database::getConnection("prod");
 //set timezone
 date_default_timezone_set("Asia/jakarta");
 
+//set session for flasher message
+if(!session_id()) session_start();
+
 //router home
 Router::add("GET","/",HomeController::class,"index");
 Router::add("GET","/anime",HomeController::class,"anime");

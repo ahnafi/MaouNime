@@ -29,7 +29,9 @@ include_once __DIR__ . "/../Components/navbar.php";
                         alt="image <?= htmlspecialchars($animeItem['title']) ?>">
                     <div class="card-body">
                         <h5 class="card-title"><?= htmlspecialchars($animeItem['title'], ENT_QUOTES, 'UTF-8') ?></h5>
-                        <p class="card-text"><?= htmlspecialchars($animeItem['score'], ENT_QUOTES, 'UTF-8') ?></p>
+                        <?php if(isset($animeItem['score'])) : ?>
+                        <p class="card-text">Global Score <?= htmlspecialchars($animeItem['score'], ENT_QUOTES, 'UTF-8') ?></p>
+                        <?php endif; ?>
                         <a href="/anime/detail/<?= $animeItem['mal_id'] ?>" class="btn btn-primary">More Info</a>
                     </div>
                 </div>

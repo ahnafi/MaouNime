@@ -1,9 +1,9 @@
 <?php
 
 namespace MoView\Controller;
+use MoView\App\Flasher;
 use MoView\App\View;
 use MoView\Config\Database;
-use MoView\Domain\Rating;
 use MoView\Exception\ValidationException;
 use MoView\Model\UserCommentAnimeRequest;
 use MoView\Model\UserCreateWatchListRequest;
@@ -76,13 +76,13 @@ class HomeController
         $user = $this->sessionService->current();
         $topScore = $this->animeServices->getAnimeFile(__DIR__ . "/../Data/topScoreAnime.json");
         $upComing = $this->animeServices->getAnimeFile(__DIR__ . "/../Data/airingAnime.json");
-        $commentedAnime = $this->animeServices->getPopularAnimeCommented();
+//        $commentedAnime = $this->animeServices->getPopularAnimeCommented();
         $data = [
             "title" => "MaouNime anime wiki",
             'anime' => [
                 "topScore" => $topScore,
                 "upComing" => $upComing,
-              "comented" => $commentedAnime,
+//              "comented" => $commentedAnime,
             ],
         ];
 
@@ -128,48 +128,58 @@ class HomeController
   }
 
 
-  public function detailAnime($id): void
-  {
-    $user = $this->sessionService->current();
+    public function detailAnime($id): void
+    {
+        try {
+            // Cek user session, bisa jadi null jika user belum login
+            $user = $this->sessionService->current();
 
-    // Ambil data anime berdasarkan ID
-    $anime = $this->animeServices->getanimeById($id);
+            // Ambil data anime berdasarkan ID
+            $anime = $this->animeServices->getanimeById($id);
 
-    // Ambil komentar berdasarkan ID anime
-    $comments = $this->commentServices->getCommentByAnimeId($id);
+            // Jika anime tidak ditemukan atau ada kesalahan status, redirect ke halaman anime
+            if (isset($anime["status"])) {
+                View::redirect('/anime');
+                return; // Pastikan keluar dari method setelah redirect
+            }
 
-    // ambil rata rata anime rating
-    $rating = new UserGetCurrentRatingRequest();
-    $rating->animeId = $id;
-    $rating->userId = $user->id;
+            // Ambil komentar berdasarkan ID anime
+            $comments = $this->commentServices->getCommentByAnimeId($id);
 
-    $rating = $this->ratingService->currentRating($rating);
+            // Ambil rata-rata rating anime, cek apakah user login
+            $rating = null;
+            if ($user !== null) {
+                $ratingRequest = new UserGetCurrentRatingRequest();
+                $ratingRequest->animeId = $id;
+                $ratingRequest->userId = $user->id;
 
-    // Jika anime tidak ditemukan atau ada kesalahan status, redirect ke halaman anime
-    if (isset($anime["status"])) {
-      View::redirect('/anime');
+                $rating = $this->ratingService->currentRating($ratingRequest);
+            }
+
+            // Siapkan data untuk dikirim ke view
+            $data = [
+                "title" => "MaouNime anime wiki",
+                'anime' => $anime,
+                'comments' => $comments,
+                'rating' => $rating,  // bisa null jika user tidak login
+            ];
+
+            // Jika user login, tambahkan informasi user
+            if ($user !== null) {
+                $data["user"] = [
+                    "name" => $user->name,
+                ];
+            }
+
+            // Render tampilan detail anime
+            View::render('Anime/detail', $data);
+        } catch (\Exception $e) {
+            // Jika terjadi kesalahan lain, redirect ke halaman error atau anime
+            View::redirect('/anime');
+        }
     }
 
-    // Siapkan data untuk dikirim ke view
-    $data = [
-      "title" => "MaouNime anime wiki",
-      'anime' => $anime,
-      'comments' => $comments,
-      'rating' => $rating,
-    ];
-
-    // Jika user login, tambahkan informasi user
-    if ($user !== null) {
-      $data["user"] = [
-        "name" => $user->name,
-      ];
-    }
-
-    // Render tampilan detail anime
-    View::render('Anime/detail', $data);
-  }
-
-  public function postComment(): void {
+    public function postComment(): void {
     $date = new \DateTime();
     $user = $this->sessionService->current();
 
@@ -182,11 +192,13 @@ class HomeController
 
     try {
       $this->commentServices->createComment($request);
+        Flasher::setFlash("Success", "komentar berhasil ditambahkan","success");
       View::redirect("/anime/detail/" . $request->animeId);
     } catch (ValidationException $exception) {
       // Jika ada error, kembalikan ke halaman detail dengan pesan error
 
         // unhandle error
+        Flasher::setFlash("ERROR", $exception->getMessage(),"error");
 
       View::redirect("/anime/detail/" . $request->animeId);
     }
@@ -204,11 +216,12 @@ class HomeController
 
     try{
       $this->watchListService->createWatchList($request);
-      
+      Flasher::setFlash("Success", "Watch list berhasil ditambahkan","success");
       View::redirect("/anime/detail/" . $request->animeId);
     }catch(ValidationException $err){
 
       // unhandle error
+        Flasher::setFlash("ERROR", $err->getMessage(),"error");
 
       View::redirect("/anime/detail/" . $request->animeId);
     }
@@ -225,10 +238,12 @@ class HomeController
 
     try{
       $this->ratingService->ratingAnime($request);
+      Flasher::setFlash("Success", "Rating berhasil ditambahkan","success");
       View::redirect("/anime/detail/" . $request->animeId);
     }catch(ValidationException $err){
 
       // unhandle error
+        Flasher::setFlash("ERROR", $err,"error");
 
       View::redirect("/anime/detail/" . $request->animeId);
     }

@@ -1,8 +1,9 @@
-<?php if(isset($model['error'])) : ?>
-    <div>
-        <?= $model['error']; ?>
-    </div>
-<?php endif; ?>
+<?php
+
+use MoView\App\Flasher;
+Flasher::FLASH();
+
+?>
 <div>
     halaman register
 

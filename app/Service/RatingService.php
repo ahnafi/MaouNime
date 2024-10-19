@@ -76,32 +76,43 @@ class RatingService
         }
     }
 
-    public function currentRating (UserGetCurrentRatingRequest $request):UserGetCurrentRatingResponse {
-
+    public function currentRating(UserGetCurrentRatingRequest $request): UserGetCurrentRatingResponse
+    {
         $this->validateUserGetCurrentRatingRequest($request);
 
         try {
+            // Inisialisasi Rating
             $rating = new Rating();
             $rating->userId = $request->userId;
             $rating->animeId = $request->animeId;
-            $data = $this->ratingRepository->findRating($rating);
 
+            // Ambil data rating user dan rata-rata rating anime
+            $data = $this->ratingRepository->findRating($rating);
             $score = $this->ratingRepository->avgRating($request->animeId);
-           
+
+            // Siapkan response
             $response = new UserGetCurrentRatingResponse();
             $response->rating = $data;
             $response->score = $score;
+
             return $response;
-        } catch (ValidationException $e) {
-            //log error
+        } catch (Exception $e) {
+            // Log error jika ada
+            error_log($e->getMessage());
             throw $e;
         }
     }
 
     private function validateUserGetCurrentRatingRequest(UserGetCurrentRatingRequest $request): void
     {
-        if (empty($request->animeId || empty($request->userId))) {
-            throw new ValidationException("animeId and userId are required");
+        // Pisahkan pengecekan antara animeId dan userId agar lebih jelas
+        if (empty($request->animeId)) {
+            throw new ValidationException("Anime ID is required");
+        }
+
+        if (empty($request->userId)) {
+            throw new ValidationException("User ID is required");
         }
     }
+
 }
