@@ -44,6 +44,7 @@ CREATE TABLE watchlist (
     anime_id INT NOT NULL,
     status varchar(30) NOT NULL,
     img varchar(255) NOT NULL ,
+    synopsis text null default null,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (anime_id) REFERENCES animes(id) ON DELETE CASCADE,
     UNIQUE (user_id, anime_id) -- Agar user tidak menambahkan anime yang sama lebih dari sekali

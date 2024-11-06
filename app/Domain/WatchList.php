@@ -9,4 +9,5 @@ class WatchList
   public int $animeId;
   public string $status;
   public string $img;
+  public string $synopsis;
 }

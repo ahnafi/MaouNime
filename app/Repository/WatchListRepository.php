@@ -15,14 +15,14 @@ class WatchListRepository
 
     public function save(WatchList $watchList): WatchList
     {
-        $statement = $this->connection->prepare("INSERT INTO watchlist (user_id,anime_id,status,img) VALUES (?,?,?,?)");
-        $statement->execute([$watchList->userId, $watchList->animeId, $watchList->status, $watchList->img]);
+        $statement = $this->connection->prepare("INSERT INTO watchlist (user_id,anime_id,status,img,synopsis) VALUES (?,?,?,?,?)");
+        $statement->execute([$watchList->userId, $watchList->animeId, $watchList->status, $watchList->img,$watchList->synopsis]);
         return $watchList;
     }
 
     public function getWatchListByUserId(string $userId): ?array
     {
-        $statement = $this->connection->prepare("SELECT id, user_id, anime_id, status, img FROM watchlist WHERE user_id = ? ORDER BY id DESC ");
+        $statement = $this->connection->prepare("SELECT id, user_id, anime_id, status, img,synopsis FROM watchlist WHERE user_id = ? ORDER BY id DESC ");
         $statement->execute([$userId]);
 
         $rows = $statement->fetchAll();
@@ -41,6 +41,7 @@ class WatchListRepository
             $watchList->animeId = $row["anime_id"];
             $watchList->status = $row["status"];
             $watchList->img = $row["img"];
+            $watchList->synopsis = $row["synopsis"];
 
             $watchLists[] = $watchList;
         }
@@ -50,7 +51,7 @@ class WatchListRepository
 
     public function getWatchListByUserIdAndAnimeId(string $userId, int $animeId): ?WatchList
     {
-        $statement = $this->connection->prepare("SELECT id, user_id, anime_id, status, img FROM watchlist WHERE user_id = ? AND anime_id = ?");
+        $statement = $this->connection->prepare("SELECT id, user_id, anime_id, status, img,synopsis FROM watchlist WHERE user_id = ? AND anime_id = ?");
         $statement->execute([$userId, $animeId]);
 
         try {
@@ -66,6 +67,7 @@ class WatchListRepository
             $watchList->animeId = $row["anime_id"];
             $watchList->status = $row["status"];
             $watchList->img = $row["img"];
+            $watchList->synopsis = $row["synopsis"];
 
             return $watchList;
         } finally {

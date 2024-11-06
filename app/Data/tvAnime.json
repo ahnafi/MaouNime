@@ -1,0 +1,112 @@
+[
+  {
+    "mal_id": 1,
+    "images": {
+      "webp": {
+        "image_url": "https://cdn.myanimelist.net/images/anime/4/19644.webp"
+      }
+    },
+    "title": "Cowboy Bebop",
+    "score": 8.75
+  },
+  {
+    "mal_id": 6,
+    "images": {
+      "webp": {
+        "image_url": "https://cdn.myanimelist.net/images/anime/1130/120002.webp"
+      }
+    },
+    "title": "Trigun",
+    "score": 8.22
+  },
+  {
+    "mal_id": 7,
+    "images": {
+      "webp": {
+        "image_url": "https://cdn.myanimelist.net/images/anime/10/19969.webp"
+      }
+    },
+    "title": "Witch Hunter Robin",
+    "score": 7.24
+  },
+  {
+    "mal_id": 8,
+    "images": {
+      "webp": {
+        "image_url": "https://cdn.myanimelist.net/images/anime/7/21569.webp"
+      }
+    },
+    "title": "Bouken Ou Beet",
+    "score": 6.93
+  },
+  {
+    "mal_id": 15,
+    "images": {
+      "webp": {
+        "image_url": "https://cdn.myanimelist.net/images/anime/1079/133529.webp"
+      }
+    },
+    "title": "Eyeshield 21",
+    "score": 7.91
+  },
+  {
+    "mal_id": 20,
+    "images": {
+      "webp": {
+        "image_url": "https://cdn.myanimelist.net/images/anime/1141/142503.webp"
+      }
+    },
+    "title": "Naruto",
+    "score": 7.92
+  },
+  {
+    "mal_id": 21,
+    "images": {
+      "webp": {
+        "image_url": "https://cdn.myanimelist.net/images/anime/1244/138851.webp"
+      }
+    },
+    "title": "One Piece",
+    "score": 8.73
+  },
+  {
+    "mal_id": 23,
+    "images": {
+      "webp": {
+        "image_url": "https://cdn.myanimelist.net/images/anime/1146/124743.webp"
+      }
+    },
+    "title": "Ring ni Kakero 1",
+    "score": 6.65
+  },
+  {
+    "mal_id": 26,
+    "images": {
+      "webp": {
+        "image_url": "https://cdn.myanimelist.net/images/anime/1027/131977.webp"
+      }
+    },
+    "title": "Texhnolyze",
+    "score": 7.76
+  },
+  {
+    "mal_id": 30,
+    "images": {
+      "webp": {
+        "image_url": "https://cdn.myanimelist.net/images/anime/1314/108941.webp"
+      }
+    },
+    "title": "Shinseiki Evangelion",
+    "score": 8.36
+  },
+  {
+    "mal_id": 33,
+    "images": {
+      "webp": {
+        "image_url": "https://cdn.myanimelist.net/images/anime/1384/119988.webp"
+      }
+    },
+    "title": "Kenpuu Denki Berserk",
+    "score": 8.50
+  }
+]

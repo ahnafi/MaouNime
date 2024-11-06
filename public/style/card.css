@@ -1,0 +1,54 @@
+.card-size {
+    width: 16rem;
+    height: 20rem;
+}
+
+.card {
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.card:hover {
+    transform: scale(0.99);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    background-size: 120%;
+}
+
+.card-meta {
+    color: rgba(0, 0, 0, 0.3);
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 2px;
+}
+
+.card-body {
+    background: #fff;
+    background: linear-gradient(0deg, rgba(0, 0, 0, .6), rgba(200, 200, 200, .2));
+    transition: all 0.5s ease-in-out; /* Transisi untuk efek halus */
+}
+
+.card-body:hover {
+    background: linear-gradient(0deg, rgba(0, 0, 0, .9), rgba(200, 200, 200, .2));
+}
+
+.card-title {
+    font-weight: 800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    cursor: pointer;
+    transition: max-height 0.6s ease-in-out, opacity 0.3s ease-in-out; /* Transisi animasi */
+    max-height: 1.2em;
+    opacity: 1;
+}
+
+.card:hover .card-title {
+    white-space: normal;
+    overflow: visible;
+    max-height: 10em;
+    opacity: 1;
+}

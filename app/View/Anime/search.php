@@ -1,6 +1,50 @@
 <!-- Navbar -->
 <?php include_once __DIR__ . '/../Components/navbar.php'; ?>
+<style>
+    .card-size {
+        width: 100%;
+        min-width: 150px; /* Minimum width to keep layout */
+        height: 250px;
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
 
+    .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-body {
+        background: linear-gradient(0deg, rgba(0, 0, 0, 0.6), rgba(255, 255, 255, 0.1));
+    }
+
+    .card-title {
+        font-weight: 800;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
+
+    .card:hover .card-title {
+        white-space: normal;
+        overflow: visible;
+        animation: expand 0.3s ease-in-out;
+    }
+
+    /* Animation for card text expand */
+    @keyframes expand {
+        from {
+            opacity: 0;
+            transform: translateY(5px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
 <div class="container">
     <?php include_once __DIR__ . "/../Components/search.php"; ?>
 
@@ -12,47 +56,44 @@
         </div>
     </div>
 
-    <div class="row d-flex" id="animeList">
+    <!-- Responsive card layout -->
+    <div class="row d-flex flex-wrap row-cols-lg-5 row-cols-sm-2 row-cols-md-3 g-3" id="animeList">
         <!-- Placeholder Anime Cards -->
-        <?php for($i=1 ; $i <= 25; $i++) : ?>
-            <div class="col">
-                <div class="card" style="width: 16rem;">
-                    <img src="/images/dummy.svg" class="card-img-top placeholder-wave" alt="dummy">
-                    <div class="card-body placeholder-glow">
-                        <h5 class="card-title placeholder">blabla</h5>
-                        <p class="card-text placeholder">blabla</p>
-                        <a href="" class="btn btn-primary placeholder">blabla</a>
+        <?php for ($i = 1; $i <= 20; $i++) : ?>
+            <a href="#" class="text-decoration-none col my-1">
+                <div class="card card-size"
+                     style="background-image: url('/images/dummy.svg')">
+                    <div class="card-body d-flex justify-content-start align-content-end flex-column-reverse">
+                        <h6 class="card-title fw-bold text-white placeholder">title of the cards</h6>
                     </div>
                 </div>
-            </div>
-        <?php endfor;?>
+            </a>
+        <?php endfor; ?>
     </div>
-
 </div>
 
 <script src="/script/fetchapi.js"></script>
 <script>
     function renderAnimeList(animeList) {
-        $("#animeList").html(""); // Bersihkan list sebelumnya
+        $("#animeList").html("");
 
-        animeList.forEach(function(anime) {
+        animeList.forEach(function (anime) {
             let animeCard = `
-                <div class="col">
-                    <div class="card" style="width: 16rem;">
-                        <img src="${anime.images.webp.image_url}" class="card-img-top" alt="image ${anime.title}">
-                        <div class="card-body">
-                            <h5 class="card-title">${anime.title}</h5>
-                            ${anime.score ? `<p class="card-text">Global Score ${anime.score}</p>` : ''}
-                            <a href="/anime/detail/${anime.mal_id}" class="btn btn-primary">More Info</a>
+                <a href="/anime/detail/${anime.mal_id}" class="text-decoration-none col my-1">
+                    <div class="card card-size "
+                         style="background-image: url('${anime.images.webp.image_url}')">
+                        <div class="card-body d-flex justify-content-start align-content-end flex-column-reverse">
+                            <h6 class="card-title fw-bold text-white">${anime.title}</h6>
+                             <p class="card-meta fw-medium text-white">${anime.score ? "Global : " + anime.score : ""}</p>
                         </div>
                     </div>
-                </div>
+                </a>
             `;
             $("#animeList").append(animeCard);
         });
     }
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         let page = 1;
         let lastPage = 1;
 
@@ -65,37 +106,37 @@
                 status: getQueryParam("status"),
                 rating: getQueryParam("rating"),
                 sort: getQueryParam("sort") || "desc",
-                genre: getQueryParam("genres"),
+                genres: getQueryParam("genres"),
                 page: page,
             };
             // fetchanime dari folder script
-            fetchAnime("?sfw=true&",params, function(response) {
+            fetchAnime("?sfw=true&", params, function (response) {
                 lastPage = response.pagination.last_visible_page;
                 renderAnimeList(response.data);
 
                 // Update pagination button
                 $("#prevButton").prop("disabled", page <= 1);
                 $("#nextButton").prop("disabled", page >= lastPage);
-            }, function() {
+            }, function () {
                 Swal.fire("YOO santai santai!!!");
             });
         }
 
         // Pencarian anime
-        $("#searchButton").click(function() {
+        $("#searchButton").click(function () {
             page = 1; // Reset ke halaman pertama jika ada pencarian
             loadAnime(page);
         });
 
         // Navigasi pagination
-        $("#prevButton").click(function() {
+        $("#prevButton").click(function () {
             if (page > 1) {
                 page--;
                 loadAnime(page);
             }
         });
 
-        $("#nextButton").click(function() {
+        $("#nextButton").click(function () {
             if (page < lastPage) {
                 page++;
                 loadAnime(page);

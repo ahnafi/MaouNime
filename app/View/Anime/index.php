@@ -2,7 +2,9 @@
 
 $topScore = array_slice($model['anime']['topScore'], 0, 8) ?? [];
 $upComing = array_slice($model['anime']['upComing'], 0, 8) ?? [];
-$comented = $model['anime']['comented'] ?? null;
+$tvAnime = array_slice($model['anime']['tv'], 0, 8) ?? [];
+$ovaAnime = array_slice($model["anime"]["ova"], 0, 8) ?? [];
+$movie = array_slice($model["anime"]["movie"], 0, 8) ?? [];
 
 // navbar taruh di awal php biar gak error
 include_once __DIR__ . "/../Components/navbar.php";
@@ -31,70 +33,117 @@ include_once __DIR__ . "/../Components/navbar.php";
             <a href="/anime/search?type=tv&order_by=score&sort=desc" class="link">More</a>
         </div>
     </div>
+
     <div class="row py-3">
-        <div class="anime-slide col-12 gap-3 d-flex overflow-x-scroll ">
+        <div class="anime-slide col-12 gap-3 d-flex overflow-x-scroll py-2">
             <?php foreach ($topScore as $animeItem): ?>
-                <div class="card col-6" style="width: 16rem;">
-                    <img src="<?= $animeItem['images']['webp']['image_url'] ?>" loading="lazy" class="card-img-top"
-                        alt="image <?= $animeItem['title'] ?>">
-                    <div class="card-body">
-                        <h5 class="card-title"><?= htmlspecialchars($animeItem['title'], ENT_QUOTES, 'UTF-8') ?></h5>
-                        <p class="card-text">Global Score <?= htmlspecialchars($animeItem['score'], ENT_QUOTES, 'UTF-8') ?></p>
-                        <a href="/anime/detail/<?= $animeItem['mal_id'] ?>" class="btn btn-primary">More Info</a>
+                <a href="/anime/detail/<?= $animeItem["mal_id"] ?>" class="text-decoration-none">
+                    <div class="card card-size "
+                         style="background-image: url('<?= $animeItem["images"]["webp"]["image_url"] ?>')">
+                        <div class="card-body d-flex justify-content-start align-content-end flex-column-reverse">
+                            <h6 class="card-title fw-bold text-white"><?= $animeItem["title"] ?></h6>
+                            <p class="card-meta fw-medium text-white">Score : <?= $animeItem["score"] ?></p>
+                        </div>
                     </div>
-                </div>
+                </a>
             <?php endforeach; ?>
         </div>
     </div>
     <!-- top score anime -->
-    <!-- up coming anime -->
+    <!-- upcoming anime -->
     <div class="row py-3">
         <div class="col-6">
-            <h2>Up Coming Anime</h2>
+            <h2>Upcoming Anime</h2>
         </div>
         <div class="col d-flex justify-content-end align-items-center">
             <a href="/anime/search?status=upcoming&type=tv&sort=desc" class="link">More</a>
         </div>
     </div>
     <div class="row py-3">
-        <div class="anime-slide col-12 gap-3 d-flex overflow-x-scroll ">
+        <div class="anime-slide col-12 gap-3 d-flex overflow-x-scroll py-2">
             <?php foreach ($upComing as $animeItem): ?>
-                <div class="card col-6" style="width: 16rem;">
-                    <img src="<?= $animeItem['images']['webp']['image_url'] ?>" loading="lazy" class="card-img-top"
-                        alt="image <?= $animeItem['title'] ?>">
-                    <div class="card-body">
-                        <h5 class="card-title"><?= htmlspecialchars($animeItem['title'], ENT_QUOTES, 'UTF-8') ?></h5>
-                        <a href="/anime/detail/<?= $animeItem['mal_id'] ?>" class="btn btn-primary">More Info</a>
+                <a href="/anime/detail/<?= $animeItem["mal_id"] ?>" class="text-decoration-none">
+                    <div class="card card-size "
+                         style="background-image: url('<?= $animeItem["images"]["webp"]["image_url"] ?>')">
+                        <div class="card-body d-flex justify-content-start align-content-end flex-column-reverse">
+                            <h6 class="card-title fw-bold text-white"><?= $animeItem["title"] ?></h6>
+                        </div>
                     </div>
-                </div>
+                </a>
             <?php endforeach; ?>
         </div>
     </div>
     <!-- end tile -->
-    <!--  comented anime -->
-    <?php if ($comented): ?>
-
-        <div class="row py-3">
-            <div class="col-6">
-                <h2>Top Commented Anime</h2>
-            </div>
+    <!-- tv anime -->
+    <div class="row py-3">
+        <div class="col-6">
+            <h2>TV Anime</h2>
         </div>
-        <div class="row py-3">
-            <div class="anime-slide col-12 gap-3 d-flex overflow-x-scroll ">
-              <?php foreach ($comented as $animeItem): ?>
-                  <div class="card col-6" style="width: 16rem;">
-                      <img src="<?= $animeItem['images']['webp']['image_url'] ?>" loading="lazy" class="card-img-top"
-                           alt="image <?= $animeItem['title'] ?>">
-                      <div class="card-body">
-                          <h5 class="card-title"><?= htmlspecialchars($animeItem['title'], ENT_QUOTES, 'UTF-8') ?></h5>
-                          <p class="card-text"><?= htmlspecialchars($animeItem['score'], ENT_QUOTES, 'UTF-8') ?></p>
-                          <a href="/anime/detail/<?= $animeItem['mal_id'] ?>" class="btn btn-primary">More Info</a>
-                      </div>
-                  </div>
-              <?php endforeach; ?>
-            </div>
+        <div class="col d-flex justify-content-end align-items-center">
+            <a href="/anime/search?type=tv&sort=desc" class="link">More</a>
         </div>
-
-    <?php endif; ?>
-    <!-- end  -->
+    </div>
+    <div class="row py-3">
+        <div class="anime-slide col-12 gap-3 d-flex overflow-x-scroll py-2">
+            <?php foreach ($tvAnime as $animeItem): ?>
+                <a href="/anime/detail/<?= $animeItem["mal_id"] ?>" class="text-decoration-none">
+                    <div class="card card-size "
+                         style="background-image: url('<?= $animeItem["images"]["webp"]["image_url"] ?>')">
+                        <div class="card-body d-flex justify-content-start align-content-end flex-column-reverse">
+                            <h6 class="card-title fw-bold text-white"><?= $animeItem["title"] ?></h6>
+                        </div>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <!-- end tile -->
+    <!-- ova anime -->
+    <div class="row py-3">
+        <div class="col-6">
+            <h2>OVA Anime</h2>
+        </div>
+        <div class="col d-flex justify-content-end align-items-center">
+            <a href="/anime/search?type=ova&sort=desc" class="link">More</a>
+        </div>
+    </div>
+    <div class="row py-3">
+        <div class="anime-slide col-12 gap-3 d-flex overflow-x-scroll py-2">
+            <?php foreach ($ovaAnime as $animeItem): ?>
+                <a href="/anime/detail/<?= $animeItem["mal_id"] ?>" class="text-decoration-none">
+                    <div class="card card-size "
+                         style="background-image: url('<?= $animeItem["images"]["webp"]["image_url"] ?>')">
+                        <div class="card-body d-flex justify-content-start align-content-end flex-column-reverse">
+                            <h6 class="card-title fw-bold text-white"><?= $animeItem["title"] ?></h6>
+                        </div>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <!-- end tile -->
+    <!-- movie anime -->
+    <div class="row py-3">
+        <div class="col-6">
+            <h2>Movie Anime</h2>
+        </div>
+        <div class="col d-flex justify-content-end align-items-center">
+            <a href="/anime/search?type=movie&sort=desc" class="link">More</a>
+        </div>
+    </div>
+    <div class="row py-3">
+        <div class="anime-slide col-12 gap-3 d-flex overflow-x-scroll py-2">
+            <?php foreach ($movie as $animeItem): ?>
+                <a href="/anime/detail/<?= $animeItem["mal_id"] ?>" class="text-decoration-none">
+                    <div class="card card-size "
+                         style="background-image: url('<?= $animeItem["images"]["webp"]["image_url"] ?>')">
+                        <div class="card-body d-flex justify-content-start align-content-end flex-column-reverse">
+                            <h6 class="card-title fw-bold text-white"><?= $animeItem["title"] ?></h6>
+                        </div>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <!-- end tile -->
 </div>

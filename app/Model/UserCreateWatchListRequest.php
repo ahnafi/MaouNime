@@ -8,4 +8,5 @@ class UserCreateWatchListRequest {
     public string $animeTitle;
     public string $status;
     public string $img;
+    public ?string $synopsis = null;
 }

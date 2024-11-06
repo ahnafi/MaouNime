@@ -77,12 +77,18 @@ class HomeController
         $user = $this->sessionService->current();
         $topScore = $this->animeServices->getAnimeFile(__DIR__ . "/../Data/topScoreAnime.json");
         $upComing = $this->animeServices->getAnimeFile(__DIR__ . "/../Data/airingAnime.json");
+        $tv = $this->animeServices->getAnimeFile(__DIR__ . "/../Data/tvAnime.json");
+        $ova = $this->animeServices->getAnimeFile(__DIR__ . "/../Data/ovaAnime.json");
+        $movie = $this->animeServices->getAnimeFile(__DIR__ . "/../Data/movieAnime.json");
 //        $commentedAnime = $this->animeServices->getPopularAnimeCommented();
         $data = [
             "title" => "MaouNime anime wiki",
             'anime' => [
                 "topScore" => $topScore,
                 "upComing" => $upComing,
+                "tv" => $tv,
+                "ova" => $ova,
+                "movie" => $movie,
 //              "comented" => $commentedAnime,
             ],
         ];
@@ -136,13 +142,13 @@ class HomeController
             $user = $this->sessionService->current();
 
             // Ambil data anime berdasarkan ID
-            $anime = $this->animeServices->getanimeById($id);
+//            $anime = $this->animeServices->getanimeById($id);
 
             // Jika anime tidak ditemukan atau ada kesalahan status, redirect ke halaman anime
-            if (isset($anime["status"])) {
-                View::redirect('/anime');
-                return; // Pastikan keluar dari method setelah redirect
-            }
+//            if (isset($anime["status"])) {
+//                View::redirect('/anime');
+//                return; // Pastikan keluar dari method setelah redirect
+//            }
 
             // Ambil komentar berdasarkan ID anime
             $comments = $this->commentServices->getCommentByAnimeId($id);
@@ -160,7 +166,7 @@ class HomeController
             // Siapkan data untuk dikirim ke view
             $data = [
                 "title" => "MaouNime anime wiki",
-                'anime' => $anime,
+//                'anime' => $anime,
                 'comments' => $comments,
                 'rating' => $rating,  // bisa null jika user tidak login
             ];
@@ -215,6 +221,7 @@ class HomeController
     $request->img = htmlspecialchars($_POST['img']);
     $request->status = "plan to watch";
     $request->animeTitle = htmlspecialchars($_POST['animeTitle']);
+    $request->synopsis = htmlspecialchars($_POST["synopsis"]) ?? null;
 
     try{
       $this->watchListService->createWatchList($request);

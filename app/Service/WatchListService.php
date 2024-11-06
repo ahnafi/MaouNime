@@ -59,6 +59,7 @@ class WatchListService {
             $watchList->animeId = $anime->id;
             $watchList->status = $request->status;
             $watchList->img = $request->img;
+            $watchList->synopsis = $request->synopsis;
 
             $watchList = $this->watchListRepository->save($watchList);
 
