@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="profile.css">
 <?php
 function truncate($string, $length = 100, $ellipsis = '...')
 {
@@ -12,8 +13,12 @@ $watchlists = $model['watchlist'] ?? [];
 include_once __DIR__ . "/../Components/navbar.php";
 ?>
 
-<div>
-    hello <?= $model['user']['name'] ?? '' ?>
+<div class="profile">
+    <h2>Profil Account</h2>
+    <img src="img2.jpg" alt="">
+    <div class="hello">
+    Hello <?= $model['user']['name'] ?? '' ?>
+    </div>
     <a href="/users/update">update profile</a>
     <a href="/users/password">update password</a>
     <a href="/users/logout">logout</a>

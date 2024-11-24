@@ -3,7 +3,7 @@
 ?>
 <div>
     <h1>
-        index home
+        index nabila
     </h1>
     <a href="/anime">get started</a>
 </div>
