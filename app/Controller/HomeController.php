@@ -56,7 +56,7 @@ class HomeController
         ]);
     }
 
-    public function index(): void
+    public function about(): void
     {
         $user = $this->sessionService->current();
         $data = [

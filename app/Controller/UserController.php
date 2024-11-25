@@ -38,7 +38,7 @@ class UserController
 
         $animeRepository = new AnimeRepository($connection);
         $watchListRepository = new WatchListRepository($connection);
-        $this->watchListService = new WatchListService($watchListRepository,$animeRepository,$userRepository);
+        $this->watchListService = new WatchListService($watchListRepository, $animeRepository, $userRepository);
     }
 
     public function register(): void
@@ -57,7 +57,7 @@ class UserController
 
         try {
             $this->userService->register($request);
-            Flasher::setFlash("success", "You have successfully registered","success");
+            Flasher::setFlash("success", "You have successfully registered", "success");
             View::redirect('/users/login');
         } catch (ValidationException $exception) {
             Flasher::setFlash("Gagal", $exception->getMessage(), "error");
@@ -120,17 +120,18 @@ class UserController
 
         try {
             $this->userService->updateProfile($request);
-            Flasher::setFlash("success", "Update Profile berhasil","success");
+            Flasher::setFlash("success", "Update Profile berhasil", "success");
             View::redirect('/users/profile');
         } catch (ValidationException $exception) {
             Flasher::setFlash("Update Gagal", $exception->getMessage(), "error");
-            View::render("User/update", [
-                'title' => 'Update profile',
-                'user' => [
-                    'id' => $user->id,
-                    'name' => $_POST['name'],
-                ]
-            ]);
+//            View::render("User/update", [
+//                'title' => 'Update profile',
+//                'user' => [
+//                    'id' => $user->id,
+//                    'name' => $_POST['name'],
+//                ]
+//            ]);
+            View::redirect('/users/profile');
         }
     }
 
@@ -145,6 +146,7 @@ class UserController
             ]
         ]);
     }
+
     public function postUpdatePassword(): void
     {
         $user = $this->sessionService->current();
@@ -155,20 +157,27 @@ class UserController
 
         try {
             $this->userService->updatePassword($request);
-            Flasher::setFlash("success", "Password berhasil di update","success");
+            Flasher::setFlash("success", "Password berhasil di update", "success");
             View::redirect('/users/profile');
         } catch (ValidationException $exception) {
             Flasher::setFlash("Gagal", $exception->getMessage(), "error");
-            View::render("User/password", [
-                'title' => 'Update password',
-                'user' => [
-                    'id' => $user->id,
-                ]
-            ]);
+            View::redirect('/users/profile');
         }
     }
 
-    public function userProfile(): void
+    public function profile(): void
+    {
+        $user = $this->sessionService->current();
+
+        $model = [
+            'title' => 'User profile',
+            'user' => (array)$user,
+        ];
+
+        View::render("User/profile", $model);
+    }
+
+    public function watchlist(): void
     {
         $user = $this->sessionService->current();
         $userId = new UserProfileWatchlistRequest();
@@ -176,32 +185,29 @@ class UserController
         $response = $this->watchListService->fetchUserWatchlist($userId);
 
         $data = [
-            'title' => 'User profile',
-            'user' => [
-                'name' => $user->name,
-            ]
+            'title' => 'Watch list',
+            'user' => (array)$user,
         ];
 
-        if(isset($response->watchList))
-        {
+        if (isset($response->watchList)) {
             $data["watchlist"] = $response->watchList;
         }
 
-        View::render("User/profile", $data);
+        View::render("User/watchlist", $data);
     }
 
     public function postWatchlistUpdate(): void
     {
         $user = $this->sessionService->current();
         $request = new UserUpdateWatchlistRequest();
-        $request->watchListId = (int) $_POST['watchListId'];
+        $request->watchListId = (int)$_POST['watchListId'];
         $request->userId = $user->id;
-        $request->animeId = (int) $_POST['animeId'];
+        $request->animeId = (int)$_POST['animeId'];
         $request->status = $_POST['status'];
 
         try {
             $this->watchListService->updateWatchList($request);
-            Flasher::setFlash("success", "Watchlist berhasil di update","success");
+            Flasher::setFlash("success", "Watchlist berhasil di update", "success");
             View::redirect('/users/profile');
         } catch (ValidationException $exception) {
 
@@ -214,7 +220,7 @@ class UserController
     public function postWatchlistDelete(): void
     {
         $user = $this->sessionService->current();
-        $animeId = (int) htmlspecialchars($_POST['animeId']);
+        $animeId = (int)htmlspecialchars($_POST['animeId']);
 
         try {
 
@@ -223,7 +229,7 @@ class UserController
             $request->animeId = $animeId;
 
             $this->watchListService->deleteWatchList($request);
-            Flasher::setFlash("success", "Watchlist berhasil di hapus","success");
+            Flasher::setFlash("success", "Watchlist berhasil di hapus", "success");
             View::redirect('/users/profile');
         } catch (ValidationException $exception) {
 

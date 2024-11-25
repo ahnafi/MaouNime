@@ -10,7 +10,7 @@ function getDatabaseConfig(): array
                 "password" => ""
             ],
             "prod" => [
-                "url" => "mysql:host=localhost:3306;dbname=maounime",
+                "url" => "mysql:host=localhost;dbname=maounime",
                 "username" => "root",
                 "password" => ""
             ]

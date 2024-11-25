@@ -18,8 +18,8 @@ date_default_timezone_set("Asia/jakarta");
 if(!session_id()) session_start();
 
 //router home
-Router::add("GET","/",HomeController::class,"index");
-Router::add("GET","/anime",HomeController::class,"anime");
+Router::add("GET","/about",HomeController::class,"about");
+Router::add("GET","/",HomeController::class,"anime");
 Router::add("GET","/anime/detail/([0-9]*)",HomeController::class,"detailAnime");
 Router::add("GET","/anime/search",HomeController::class,"searchAnime");
 Router::add("POST", "/anime/comment", HomeController::class, "postComment", [MustLoginMiddleware::class]);
@@ -28,12 +28,13 @@ Router::add("POST","/anime/rating",HomeController::class,"postRating",[MustLogin
 Router::add("POST", "/anime/comment/delete", HomeController::class, "postDeleteComment", [MustLoginMiddleware::class]);
 
 //router user
-Router::add("GET","/users/profile",UserController::class,"userProfile",[MustLoginMiddleware::class]);
+Router::add("GET","/users/profile",UserController::class,"profile",[MustLoginMiddleware::class]);
+Router::add("GET","/users/watchlist",UserController::class,"watchlist",[MustLoginMiddleware::class]);
 Router::add("GET","/users/register",UserController::class,"register",[MustNotLoginMiddleware::class]);
 Router::add("GET","/users/login",UserController::class,"login",[MustNotLoginMiddleware::class]);
 Router::add("GET","/users/logout",UserController::class,"logout",[MustLoginMiddleware::class]);
-Router::add("GET","/users/update",UserController::class,"updateProfile",[mustLoginMiddleware::class]);
-Router::add("GET","/users/password",UserController::class,"updatePassword",[mustLoginMiddleware::class]);
+//Router::add("GET","/users/update",UserController::class,"updateProfile",[mustLoginMiddleware::class]);
+//Router::add("GET","/users/password",UserController::class,"updatePassword",[mustLoginMiddleware::class]);
 Router::add("POST","/users/login",UserController::class,"postLogin",[MustNotLoginMiddleware::class]);
 Router::add("POST","/users/register",UserController::class,"postRegister",[MustNotLoginMiddleware::class]);
 Router::add("POST","/users/update",UserController::class,"postUpdateProfile",[mustLoginMiddleware::class]);

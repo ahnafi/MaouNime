@@ -5,14 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/bootstrap/bootstrap.min.css">
+    <link rel="icon" href="/images/favicon.png" type="image/x-icon">
     <script src="/bootstrap/bootstrap.bundle.min.js"></script>
-    <script src="
-https://cdn.jsdelivr.net/npm/sweetalert2@11.14.3/dist/sweetalert2.all.min.js
-"></script>
-    <link href="
-https://cdn.jsdelivr.net/npm/sweetalert2@11.14.3/dist/sweetalert2.min.css
-" rel="stylesheet">
-    <link rel="stylesheet" href="/style/card.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.3/dist/sweetalert2.all.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.3/dist/sweetalert2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/style/style.css">
     <script src="/script/jquery-3.7.1.min.js"></script>
 
     <title><?= 'MaouNime | ' . $model['title'] ?? 'Maounime' ?></title>
@@ -21,6 +18,8 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.14.3/dist/sweetalert2.min.css
 <body>
 
 <?php
+
 use MoView\App\Flasher;
+
 Flasher::FLASH();
 ?>
