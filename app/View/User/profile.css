@@ -1,0 +1,28 @@
+*{
+    padding: 0;
+    margin: 0;
+    font-family: 'poppins', sans-serif;
+}
+
+.profile{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.profile h2{
+    margin-bottom: 20px;
+}
+
+img{
+    width: 200px;
+    height: 200px;
+    border-radius: 1000px;
+    margin-bottom: 20px;
+}
+
+.hello{
+    font-size: 24px;
+}
+
