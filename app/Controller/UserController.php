@@ -208,12 +208,12 @@ class UserController
         try {
             $this->watchListService->updateWatchList($request);
             Flasher::setFlash("success", "Watchlist berhasil di update", "success");
-            View::redirect('/users/profile');
+            View::redirect('/users/watchlist');
         } catch (ValidationException $exception) {
 
             Flasher::setFlash("Gagal update", $exception->getMessage(), "error");
 
-            View::redirect('/users/profile');
+            View::redirect('/users/watchlist');
         }
     }
 
@@ -230,12 +230,12 @@ class UserController
 
             $this->watchListService->deleteWatchList($request);
             Flasher::setFlash("success", "Watchlist berhasil di hapus", "success");
-            View::redirect('/users/profile');
+            View::redirect('/users/watchlist');
         } catch (ValidationException $exception) {
 
             Flasher::setFlash("Gagal hapus", $exception->getMessage(), "error");
 
-            View::redirect('/users/profile');
+            View::redirect('/users/watchlist');
         }
     }
 }

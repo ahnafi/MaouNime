@@ -1,11 +1,9 @@
-<link rel="stylesheet" href="profile.css">
 <?php
 $user = $model['user'] ?? [];
 
 include_once __DIR__ . "/../Components/navbar.php";
 ?>
 
-<<<<<<< HEAD
 <div class="container-fluid">
     <div class="row px-5 py-5">
         <div class="col-md-6 col-12 d-flex justify-content-center px-3 align-items-center py-lg-5">
@@ -49,22 +47,5 @@ include_once __DIR__ . "/../Components/navbar.php";
                 </div>
             </form>
         </div>
-=======
-<div class="profile">
-    <h2>Profil Account</h2>
-    <img src="img2.jpg" alt="">
-    <div class="hello">
-    Hello <?= $model['user']['name'] ?? '' ?>
-    </div>
-    <a href="/users/update">update profile</a>
-    <a href="/users/password">update password</a>
-    <a href="/users/logout">logout</a>
-    <a href="/">home</a>
-</div>
-
-<div class="container min-vh-100">
-    <div class="row">
-        <h2>Watchlist</h2>
->>>>>>> 97f0b73d82c6c90c1775fd9e9618fafcb7ccaae5
     </div>
 </div>

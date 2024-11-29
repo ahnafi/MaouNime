@@ -82,7 +82,7 @@
 <div class="container">
     <?php include_once __DIR__ . "/../Components/search.php"; ?>
 
-    <div class="row pb-5 px-md-2" id="pagination">
+    <div class="row pb-3 px-md-2" id="pagination">
         <div class="col">
             <p>Page <span class="page-num"></span></p>
         </div>
@@ -161,8 +161,9 @@
             // fetchanime dari folder script
             fetchAnime("?sfw=true&", params, function (response) {
                 lastPage = response.pagination.last_visible_page;
+                if (response.data.length > 24) response.data.pop()
+                console.log(response.data)
                 renderAnimeList(response.data);
-
                 // Update pagination button
                 $(".prevButton").prop("disabled", page <= 1);
                 $(".nextButton").prop("disabled", page >= lastPage);
